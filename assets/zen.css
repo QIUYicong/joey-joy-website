@@ -1,0 +1,448 @@
+/* ─────────────────────────────────────────────────────────
+   Joey's Joy — 现代禅意 design system
+   modern zen: linen white · deep wood · moss · copper · cinnabar
+   ───────────────────────────────────────────────────────── */
+
+/* ── tokens · LIGHT (default) ───────────────────────────── */
+:root {
+  /* surfaces */
+  --paper:        #f3ede0;
+  --paper-2:      #e8dfcc;
+  --paper-3:      #d8caac;
+  --paper-warm:   #ede2cb;
+
+  /* ink */
+  --ink:          #2a1d12;
+  --ink-soft:     rgba(42, 29, 18, 0.74);
+  --ink-dim:      rgba(42, 29, 18, 0.50);
+  --ink-ghost:    rgba(42, 29, 18, 0.26);
+  --ink-faint:    rgba(42, 29, 18, 0.10);
+  --hair:         rgba(42, 29, 18, 0.16);
+  --hair-soft:    rgba(42, 29, 18, 0.08);
+
+  /* accents */
+  --moss:         #5a6f4e;          /* 苔藓绿 */
+  --moss-deep:    #3f5236;
+  --copper:       #b8864f;          /* 铜金 */
+  --copper-deep:  #8e6334;
+  --cinnabar:     #a44a3f;          /* 朱砂印 */
+  --jade:         #6d8a76;
+
+  /* typography */
+  --mono:  'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --serif: 'Cormorant Garamond', 'Noto Serif SC', serif;
+  --brush: 'Ma Shan Zheng', cursive;
+  --han:   'Noto Serif SC', 'Songti SC', 'STSong', serif;
+
+  /* motion */
+  --ease: cubic-bezier(.22, 1, .36, 1);
+}
+
+/* ── tokens · DARK ──────────────────────────────────────── */
+[data-theme="dark"] {
+  --paper:        #1a1410;
+  --paper-2:      #120d09;
+  --paper-3:      #261c14;
+  --paper-warm:   #221911;
+
+  --ink:          #ede1c4;
+  --ink-soft:     rgba(237, 225, 196, 0.78);
+  --ink-dim:      rgba(237, 225, 196, 0.50);
+  --ink-ghost:    rgba(237, 225, 196, 0.28);
+  --ink-faint:    rgba(237, 225, 196, 0.12);
+  --hair:         rgba(237, 225, 196, 0.16);
+  --hair-soft:    rgba(237, 225, 196, 0.08);
+
+  --moss:         #8aa07a;
+  --moss-deep:    #5d7350;
+  --copper:       #d6a160;
+  --copper-deep:  #b5824a;
+  --cinnabar:     #c25e4f;
+  --jade:         #94b3a0;
+}
+
+/* ── reset ──────────────────────────────────────────────── */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--han);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100%;
+}
+body { min-height: 100vh; position: relative; overflow-x: hidden; }
+
+a { color: inherit; text-decoration: none; }
+
+/* ── background field (every page sits on this) ─────────── */
+.zen-field {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+}
+
+/* LIGHT field — warm linen with watercolor mottle (default) */
+.zen-field {
+  background:
+    radial-gradient(ellipse 70% 55% at 22% 18%, rgba(208,182,128,.34) 0%, transparent 60%),
+    radial-gradient(ellipse 65% 60% at 82% 78%, rgba(184,134,79,.20) 0%, transparent 62%),
+    radial-gradient(ellipse 50% 50% at 70% 22%, rgba(232,222,196,.55) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 50% at 28% 80%, rgba(216,202,172,.45) 0%, transparent 65%),
+    linear-gradient(170deg, #f4eedf 0%, #ece2c9 50%, #e0d3b4 100%);
+}
+
+/* DARK field — deep wood with low-glow */
+[data-theme="dark"] .zen-field {
+  background:
+    radial-gradient(ellipse 70% 55% at 22% 18%, rgba(184,134,79,.18) 0%, transparent 62%),
+    radial-gradient(ellipse 65% 60% at 82% 80%, rgba(90,111,78,.16)  0%, transparent 62%),
+    radial-gradient(ellipse 50% 50% at 70% 22%, rgba(70,52,34,.55)   0%, transparent 65%),
+    linear-gradient(170deg, #1d160f 0%, #14100b 55%, #0e0a07 100%);
+}
+
+/* paper grain (very subtle) — default light */
+.zen-grain {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  opacity: 0.32; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.18  0 0 0 0 0.12  0 0 0 0 0.07  0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+[data-theme="dark"] .zen-grain {
+  opacity: 0.18; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.85  0 0 0 0 0.75  0 0 0 0 0.55  0 0 0 0.45 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+/* vignette */
+.zen-vignette {
+  position: fixed; inset: 0; z-index: 2; pointer-events: none;
+  background: radial-gradient(ellipse 105% 80% at 50% 50%, transparent 50%, rgba(50, 30, 12, 0.20) 100%);
+}
+[data-theme="dark"] .zen-vignette {
+  background: radial-gradient(ellipse 100% 80% at 50% 50%, transparent 35%, rgba(0,0,0,.55) 100%);
+}
+
+/* sutra ghost layer — half-transparent characters drifting */
+.zen-sutra {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  opacity: 0.06;
+  font-family: var(--han);
+  font-size: 26px;
+  letter-spacing: 0.5em;
+  line-height: 2.4;
+  color: var(--ink);
+  padding: 40px;
+  overflow: hidden;
+  user-select: none;
+  writing-mode: vertical-rl;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+[data-theme="dark"] .zen-sutra { opacity: 0.045; }
+
+/* canvas layer (petals/smoke) */
+.zen-fx {
+  position: fixed; inset: 0; z-index: 3; pointer-events: none;
+}
+
+/* ── typography utilities ──────────────────────────────── */
+.mono {
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.mono.dim    { color: var(--ink-dim); }
+.mono.ghost  { color: var(--ink-ghost); }
+.mono.copper { color: var(--copper); }
+.mono.moss   { color: var(--moss); }
+.mono.small  { font-size: 0.66rem; letter-spacing: 0.28em; }
+
+.brush       { font-family: var(--brush); font-weight: 400; letter-spacing: 0.16em; }
+.serif-em    { font-family: var(--serif); font-style: italic; font-weight: 400; }
+
+/* ── stage ─────────────────────────────────────────────── */
+.zen-stage {
+  position: relative; z-index: 10;
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+/* ── topbar (consistent across all sub pages) ──────────── */
+.zen-topbar {
+  position: relative; z-index: 10;
+  padding: 22px 56px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--hair);
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--paper) 60%, transparent),
+    color-mix(in srgb, var(--paper) 30%, transparent));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.zen-topbar .left,
+.zen-topbar .right {
+  display: flex; align-items: center; gap: 22px;
+}
+
+.zen-back {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding: 9px 18px 9px 14px;
+  border: 1px solid var(--hair);
+  background: color-mix(in srgb, var(--paper-warm) 50%, transparent);
+  transition: all .35s var(--ease);
+}
+.zen-back:hover {
+  color: var(--copper);
+  border-color: color-mix(in srgb, var(--copper) 55%, transparent);
+  background: color-mix(in srgb, var(--copper) 8%, transparent);
+  transform: translateX(-3px);
+}
+.zen-back .arrow {
+  width: 14px; height: 1px;
+  background: currentColor;
+  position: relative;
+}
+.zen-back .arrow::before {
+  content: ''; position: absolute; left: -1px; top: 50%;
+  width: 6px; height: 6px;
+  border-left: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.zen-brand {
+  display: inline-flex; align-items: center; gap: 12px;
+}
+.zen-brand .seal {
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  font-family: var(--brush);
+  font-size: 1.2rem;
+  color: var(--paper);
+  background: var(--cinnabar);
+  letter-spacing: 0;
+  border: 1px solid color-mix(in srgb, var(--cinnabar) 60%, var(--ink));
+  box-shadow:
+    0 0 0 2px var(--paper),
+    0 0 0 3px color-mix(in srgb, var(--cinnabar) 35%, transparent),
+    0 4px 12px rgba(0,0,0,.15);
+  position: relative;
+}
+.zen-brand .seal::before {
+  /* tiny pinhole/grain on the seal */
+  content: ''; position: absolute; inset: 2px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/></svg>");
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.zen-live {
+  display: inline-flex; align-items: center; gap: 9px;
+}
+.zen-live .pulse {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--moss);
+  box-shadow: 0 0 10px var(--moss);
+  animation: zen-pulse 2.4s ease-in-out infinite;
+}
+@keyframes zen-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50%      { opacity: 1; transform: scale(1.15); }
+}
+
+/* ── page head (chapter title) ─────────────────────────── */
+.zen-head {
+  position: relative; z-index: 10;
+  padding: 72px 56px 40px;
+  max-width: 1500px; margin: 0 auto; width: 100%;
+}
+.zen-crumb {
+  display: flex; gap: 12px; align-items: center;
+  margin-bottom: 28px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.zen-crumb .sep { color: var(--ink-ghost); }
+.zen-crumb .here { color: var(--copper); }
+
+.zen-head h1 {
+  font-family: var(--brush);
+  font-size: clamp(4.5rem, 11vw, 10rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: 0.14em;
+  color: var(--ink);
+  display: inline-block;
+  position: relative;
+}
+/* small red seal next to chapter title */
+.zen-head h1 .h1-seal {
+  position: absolute;
+  top: 12%; right: -56px;
+  width: 38px; height: 38px;
+  display: grid; place-items: center;
+  font-family: var(--brush);
+  font-size: 1.05rem;
+  color: var(--paper);
+  background: var(--cinnabar);
+  letter-spacing: 0;
+  border: 1px solid color-mix(in srgb, var(--cinnabar) 60%, var(--ink));
+  transform: rotate(-4deg);
+  box-shadow: 0 6px 16px rgba(0,0,0,.18);
+}
+
+.zen-head .en-title {
+  margin-top: 22px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1.4rem, 2.2vw, 2.1rem);
+  color: var(--ink-soft);
+  letter-spacing: 0.02em;
+}
+.zen-head .rule {
+  margin-top: 28px;
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg,
+    var(--copper) 0%, var(--copper) 60px,
+    var(--hair) 60px, transparent);
+}
+
+/* ── universal card / surface ──────────────────────────── */
+.zen-card {
+  position: relative;
+  background: color-mix(in srgb, var(--paper-warm) 78%, transparent);
+  border: 1px solid var(--hair);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 35%, transparent),
+    0 14px 40px rgba(40, 24, 8, 0.10);
+  transition: all .45s var(--ease);
+}
+[data-theme="dark"] .zen-card {
+  background: color-mix(in srgb, var(--paper-3) 60%, transparent);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.06),
+    0 14px 40px rgba(0,0,0,.45);
+}
+.zen-card:hover {
+  border-color: color-mix(in srgb, var(--copper) 40%, var(--hair));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, white 45%, transparent),
+    0 24px 56px rgba(40, 24, 8, 0.18);
+  transform: translateY(-3px);
+}
+[data-theme="dark"] .zen-card:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.10),
+    0 24px 60px rgba(0,0,0,.55);
+}
+
+/* L-shaped corner marks on cards (subtle copper) */
+.zen-corners::before,
+.zen-corners::after,
+.zen-corners > .c-bl,
+.zen-corners > .c-br {
+  content: '';
+  position: absolute;
+  width: 14px; height: 14px;
+  border: 1px solid color-mix(in srgb, var(--copper) 55%, transparent);
+  pointer-events: none;
+  opacity: 0.85;
+}
+.zen-corners::before { top: 8px;    left: 8px;    border-right: none; border-bottom: none; }
+.zen-corners::after  { top: 8px;    right: 8px;   border-left:  none; border-bottom: none; }
+.zen-corners > .c-bl { bottom: 8px; left: 8px;    border-right: none; border-top:    none; }
+.zen-corners > .c-br { bottom: 8px; right: 8px;   border-left:  none; border-top:    none; }
+
+/* ── enso (禅圆) — draws as section accent ──────────────── */
+.zen-enso {
+  width: 64px; height: 64px;
+  flex: 0 0 64px;
+  position: relative;
+}
+.zen-enso svg { width: 100%; height: 100%; overflow: visible; }
+.zen-enso svg path {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+}
+
+/* ── section header ────────────────────────────────────── */
+.zen-sechead {
+  display: flex; align-items: center; gap: 22px;
+  margin-bottom: 30px;
+}
+.zen-sechead .idx {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.28em;
+  color: var(--copper);
+  text-transform: uppercase;
+}
+.zen-sechead h2 {
+  font-family: var(--brush);
+  font-size: clamp(2.4rem, 4vw, 3.4rem);
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  color: var(--ink);
+}
+.zen-sechead .en {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--ink-dim);
+  letter-spacing: 0.04em;
+}
+.zen-sechead .line {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--hair), transparent);
+}
+
+/* ── footer (consistent across pages) ──────────────────── */
+.zen-foot {
+  position: relative; z-index: 10;
+  padding: 26px 56px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid var(--hair);
+  background: linear-gradient(0deg,
+    color-mix(in srgb, var(--paper) 60%, transparent),
+    color-mix(in srgb, var(--paper) 30%, transparent));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* ── rise animation ────────────────────────────────────── */
+.zen-rise {
+  animation-name: zen-rise;
+  animation-duration: 1.0s;
+  animation-timing-function: cubic-bezier(.22, 1, .36, 1);
+  animation-fill-mode: both;
+}
+.zen-rise.d1 { animation-delay: .10s; }
+.zen-rise.d2 { animation-delay: .22s; }
+.zen-rise.d3 { animation-delay: .34s; }
+.zen-rise.d4 { animation-delay: .46s; }
+@keyframes zen-rise {
+  from { transform: translateY(18px); }
+  to   { transform: translateY(0); }
+}
+
+/* ── responsive ────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .zen-topbar, .zen-head, .zen-foot { padding-left: 22px; padding-right: 22px; }
+  .zen-head h1 .h1-seal { right: 0; top: -34px; }
+  .zen-sutra { font-size: 18px; }
+}

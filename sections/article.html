@@ -4,243 +4,195 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>文章 · Joey's Joy</title>
-  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Noto+Serif+SC:wght@300;400;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/zen.css">
   <style>
-    :root {
-      --glass-border: rgba(255,255,255,0.50);
-      --warm-amber:   #c8a55a;
-      --text-primary: #1a2540;
-      --text-muted:   #475370;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Noto Serif SC', serif;
-      background:
-        radial-gradient(ellipse 75% 60% at 18% 15%, rgba(178,200,225,.85) 0%, transparent 55%),
-        radial-gradient(ellipse 70% 60% at 85% 85%, rgba(145,175,205,.75) 0%, transparent 55%),
-        radial-gradient(ellipse 55% 55% at 72% 28%, rgba(195,210,230,.55) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 50% at 28% 78%, rgba(155,180,210,.55) 0%, transparent 60%),
-        linear-gradient(160deg, #6a7d96 0%, #4f637c 50%, #5a6f88 100%);
-      color: var(--text-primary); min-height: 100vh;
-    }
-
-    #rain-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-    .light-bloom { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 1; }
-    .light-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(255,220,150,0.18) 0%, transparent 70%); top: -180px; left: -100px; }
-    .light-2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(180,220,200,0.16) 0%, transparent 70%); bottom: -80px; right: 60px; }
-
-    .topbar {
-      position: relative; z-index: 10;
-      padding: 28px 56px;
-      border-bottom: 1px solid var(--glass-border);
-      background: rgba(255,255,255,.28);
-      backdrop-filter: blur(36px) saturate(1.4);
-      box-shadow: 0 1px 0 rgba(255,255,255,.55), 0 6px 32px rgba(20,30,55,.25);
-      display: flex; align-items: center; gap: 28px;
-    }
-    .back-btn {
-      display: inline-flex; align-items: center; gap: 10px;
-      color: var(--text-primary); text-decoration: none;
-      font-family: 'Ma Shan Zheng', cursive;
-      font-size: 1.4rem; letter-spacing: 3px;
-      padding: 10px 24px;
-      border: 1px solid rgba(200,165,90,0.50);
-      background: rgba(255,235,180,0.30);
-      backdrop-filter: blur(12px);
-      transition: all 0.3s ease;
-    }
-    .back-btn:hover { color: #5b3a08; background: rgba(255,235,180,0.55); border-color: rgba(200,165,90,0.85); transform: translateX(-4px); }
-    .crumbs { font-size: 1rem; letter-spacing: 3px; color: var(--text-muted); text-transform: uppercase; }
-    .crumbs strong { color: var(--text-primary); font-weight: 600; }
-
     article.reader {
       position: relative; z-index: 10;
-      max-width: 880px; margin: 0 auto;
-      padding: 80px 56px 100px;
+      max-width: 820px; margin: 0 auto;
+      padding: 56px 56px 100px;
     }
 
-    .section-badge {
-      display: inline-block;
-      padding: 6px 18px;
-      font-size: 0.9rem; letter-spacing: 3px;
-      color: #5b3a08;
-      background: rgba(255,235,180,.45);
-      border: 1px solid rgba(200,165,90,.55);
+    .badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 7px 14px 7px 10px;
+      font-family: var(--mono);
+      font-size: 0.72rem; letter-spacing: 0.24em;
       text-transform: uppercase;
+      color: var(--copper);
+      background: color-mix(in srgb, var(--copper) 8%, transparent);
+      border: 1px solid color-mix(in srgb, var(--copper) 40%, var(--hair));
       margin-bottom: 28px;
     }
+    .badge .seal {
+      width: 22px; height: 22px;
+      display: grid; place-items: center;
+      font-family: var(--brush);
+      font-size: 0.85rem;
+      color: var(--paper);
+      background: var(--cinnabar);
+    }
 
-    h1 {
-      font-family: 'Ma Shan Zheng', cursive;
+    h1.title {
+      font-family: var(--brush);
       font-size: clamp(3.4rem, 6.5vw, 5.5rem);
-      font-weight: 400; letter-spacing: 6px; line-height: 1.15;
-      background: linear-gradient(135deg, #1a2540 0%, #3b2a5e 50%, #1f3a5c 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      filter: drop-shadow(0 2px 1px rgba(255,255,255,.5)) drop-shadow(0 4px 12px rgba(20,30,55,.3));
-      margin-bottom: 24px;
+      font-weight: 400; letter-spacing: 0.10em; line-height: 1.15;
+      color: var(--ink);
+      margin-bottom: 22px;
     }
 
     .meta {
       display: flex; gap: 32px; flex-wrap: wrap;
       padding-bottom: 28px;
-      border-bottom: 1px solid var(--glass-border);
+      border-bottom: 1px solid var(--hair);
       margin-bottom: 48px;
-      font-size: 1.1rem; letter-spacing: 2px; color: var(--text-muted);
+      font-family: var(--mono);
+      font-size: 0.78rem; letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
     }
 
     .body {
-      background: rgba(255,255,255,.28);
-      backdrop-filter: blur(28px) saturate(1.4);
-      border: 1px solid var(--glass-border);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.65), 0 14px 40px rgba(20,30,55,.30);
       padding: 56px 64px;
-      font-size: 1.25rem; line-height: 2.05;
-      color: var(--text-primary);
+      font-family: var(--han);
+      font-size: 1.15rem; line-height: 2.05;
+      color: var(--ink-soft);
+      text-wrap: pretty;
     }
-    .body p { margin-bottom: 22px; color: #2a3552; }
-    .body p.lead { font-size: 1.4rem; color: var(--text-primary); }
+    .body p { margin-bottom: 22px; }
+    .body p.lead {
+      font-size: 1.35rem;
+      color: var(--ink);
+      line-height: 1.85;
+    }
+    .body p.lead::first-letter {
+      font-family: var(--brush);
+      font-size: 3em;
+      float: left;
+      line-height: 0.9;
+      padding: 8px 12px 0 0;
+      color: var(--cinnabar);
+    }
     .body h2 {
-      font-family: 'Ma Shan Zheng', cursive;
-      font-size: 2.6rem; font-weight: 400;
-      letter-spacing: 3px;
-      margin: 44px 0 22px;
-      color: var(--text-primary);
+      font-family: var(--brush);
+      font-size: 2.4rem; font-weight: 400;
+      letter-spacing: 0.12em;
+      margin: 48px 0 22px;
+      color: var(--ink);
+      display: flex; align-items: center; gap: 18px;
     }
-    .body .placeholder-note {
-      margin-top: 36px; padding: 24px 28px;
-      background: rgba(255,235,180,.25);
-      border: 1px dashed rgba(200,165,90,.55);
-      font-size: 1.05rem; color: #5b4a14;
-      line-height: 1.8;
+    .body h2::before {
+      content: '';
+      width: 32px; height: 1px;
+      background: var(--copper);
     }
-
-    footer {
-      position: relative; z-index: 10;
-      text-align: center; padding: 36px;
-      font-size: 0.95rem; letter-spacing: 2px;
-      color: var(--text-muted);
-      border-top: 1px solid var(--glass-border);
-      background: rgba(255,255,255,.28);
-      backdrop-filter: blur(20px);
+    .body .note {
+      margin-top: 36px; padding: 22px 26px;
+      background: color-mix(in srgb, var(--copper) 8%, transparent);
+      border-left: 3px solid var(--copper);
+      font-family: var(--han);
+      font-size: 0.98rem; color: var(--ink-soft);
+      line-height: 1.85;
+    }
+    .body code {
+      font-family: var(--mono);
+      font-size: 0.88em;
+      background: color-mix(in srgb, var(--ink) 8%, transparent);
+      padding: 1px 6px; border-radius: 2px;
     }
 
     @media (max-width: 700px) {
-      article.reader { padding: 48px 24px 80px; }
-      .body { padding: 36px 28px; font-size: 1.1rem; }
-      .topbar { padding: 20px 24px; flex-wrap: wrap; }
+      article.reader { padding: 36px 22px 80px; }
+      .body { padding: 36px 28px; font-size: 1.05rem; }
     }
   </style>
 </head>
-<body>
-  <canvas id="rain-canvas"></canvas>
-  <div class="light-bloom light-1"></div>
-  <div class="light-bloom light-2"></div>
+<body data-theme="light" data-fx="petals">
 
-  <div class="topbar">
-    <a class="back-btn" href="javascript:history.back()">← 返回</a>
-    <div class="crumbs"><strong id="crumb-section">—</strong></div>
+  <div class="zen-field"></div>
+  <div class="zen-grain"></div>
+  <div class="zen-vignette"></div>
+
+  <div class="zen-stage">
+
+    <header class="zen-topbar zen-rise">
+      <div class="left">
+        <a class="zen-back" href="javascript:history.back()">
+          <span class="arrow"></span>
+          <span>返 · Back</span>
+        </a>
+        <span class="mono dim" id="crumb">—</span>
+      </div>
+      <div class="right">
+        <span class="zen-brand">
+          <span class="seal">乔</span>
+          <span class="mono dim">Joey&rsquo;s Joy</span>
+        </span>
+      </div>
+    </header>
+
+    <article class="reader zen-rise d1">
+
+      <div class="badge"><span class="seal" id="badge-seal">?</span><span id="badge">—</span></div>
+      <h1 class="title" id="title">—</h1>
+
+      <div class="meta">
+        <span id="date">—</span>
+        <span id="readtime">约 5 分钟阅读</span>
+        <span style="color:var(--copper);">curated by 乔</span>
+      </div>
+
+      <div class="body zen-card zen-corners">
+        <span class="c-bl"></span><span class="c-br"></span>
+        <p class="lead" id="lead">这里是文章正文的起始段落，会展示当前文章的导语。当你接入数据源后，本段会被真实内容替换。</p>
+        <p>占位段落 — 正文内容尚未填写。当你接入数据库或内容管理系统之后，本页将按 URL 中的标识符拉取真实内容并渲染。</p>
+        <p>当前的链接结构是 <code>article.html?from=&lt;栏目&gt;&amp;title=&lt;标题&gt;&amp;date=&lt;日期&gt;</code>，未来切换到真实数据源时，只需改用 <code>?id=&lt;文章ID&gt;</code> 并在脚本中替换数据读取函数即可。</p>
+
+        <h2>计划写什么</h2>
+        <p>这部分留给你正式撰写时填入：核心观点、思考过程、关键素材或参考文献。可以使用多个 <strong>&lt;p&gt;</strong> 段落、<strong>&lt;h2&gt;</strong> 小标题、引用与图片。</p>
+        <p>当前页面已经预设好版面样式（字号、行距、留白），写好正文后视觉风格自动统一。</p>
+
+        <div class="note">
+          ⌘ 占位提示：访问 <strong>问穹鼎</strong> 第一篇研究条目可看到「本站数据架构 · 方案对比」，里面给出了 4 个把这个网站接入真实数据库的具体方案。
+        </div>
+      </div>
+
+    </article>
+
+    <footer class="zen-foot">
+      <span class="mono ghost">© MMXXVI · Joey&rsquo;s Joy</span>
+      <span class="mono ghost" id="foot-vol">— · Article</span>
+    </footer>
+
   </div>
 
-  <article class="reader">
-    <div class="section-badge" id="badge">—</div>
-    <h1 id="title">—</h1>
-    <div class="meta">
-      <span id="date">—</span>
-      <span id="readtime">约 5 分钟阅读</span>
-    </div>
-    <div class="body">
-      <p class="lead" id="lead">这里是文章正文的起始段落，会展示当前文章的导语。</p>
-      <p>占位段落 — 正文内容尚未填写。当你接入数据库或内容管理系统之后，本页将按 URL 中的标识符拉取真实内容并渲染。</p>
-      <p>当前的链接结构是 <code>article.html?from=&lt;栏目&gt;&amp;title=&lt;标题&gt;&amp;date=&lt;日期&gt;</code>，未来切换到真实数据源时，只需改用 <code>?id=&lt;文章ID&gt;</code> 并在脚本中替换数据读取函数即可。</p>
-
-      <h2>计划写什么</h2>
-      <p>这部分留给你正式撰写时填入：核心观点、思考过程、关键素材或参考文献。可以使用多个 <strong>&lt;p&gt;</strong> 段落、<strong>&lt;h2&gt;</strong> 小标题、引用与图片。</p>
-      <p>当前页面已经预设好版面样式（字号、行距、留白），写好正文后视觉风格自动统一。</p>
-
-      <div class="placeholder-note">
-        ⌘ 占位提示：访问 <strong>问穹鼎</strong> 第一篇研究条目可看到「本站数据架构 · 方案对比」，里面给出了 4 个把这个网站接入真实数据库的具体方案。
-      </div>
-    </div>
-  </article>
-
-  <footer>© 2026 Joey's Joy</footer>
-
   <script>
-    // ─── populate from URL params ───
-    const p = new URLSearchParams(location.search);
+    /* ─── route metadata ─── */
     const sectionMap = {
-      poetry:   { zh: '诗岚观',     en: 'Personal Portfolio' },
-      research: { zh: '问穹鼎',     en: 'Research Findings'  },
-      essays:   { zh: '众生苦',     en: 'Essays & Reflections' },
-      gallery:  { zh: '迷思觅',     en: 'Photo Collections'  },
-      profile:  { zh: '心居录',     en: 'Profile & Family'   }
+      profile:  { zh: '心居录', en: 'Profile & Family',    seal: '居', theme: 'light', fx: 'petals',  vol: '01' },
+      poetry:   { zh: '诗岚观', en: 'Personal Portfolio',   seal: '吟', theme: 'dark',  fx: 'incense', vol: '02' },
+      research: { zh: '问穹鼎', en: 'Research Findings',    seal: '问', theme: 'light', fx: 'petals',  vol: '03' },
+      essays:   { zh: '众生苦', en: 'Essays & Reflections', seal: '念', theme: 'dark',  fx: 'incense', vol: '04' },
+      gallery:  { zh: '迷思觅', en: 'Photo Collections',    seal: '觅', theme: 'light', fx: 'petals',  vol: '05' }
     };
-    const from = p.get('from') || 'poetry';
-    const meta = sectionMap[from] || sectionMap.poetry;
-    document.getElementById('crumb-section').textContent = `${meta.zh} · ${meta.en}`;
-    document.getElementById('badge').textContent = meta.en;
-    document.getElementById('title').textContent = p.get('title') || '未命名文章';
-    document.getElementById('date').textContent  = p.get('date')  || '日期待定';
+    const p    = new URLSearchParams(location.search);
+    const from = p.get('from') || 'essays';
+    const meta = sectionMap[from] || sectionMap.essays;
+
+    /* apply theme + fx to body BEFORE zen-fx loads */
+    document.body.dataset.theme = meta.theme;
+    document.body.dataset.fx    = meta.fx;
+
+    document.getElementById('crumb').textContent      = `${meta.zh} · ${meta.en}`;
+    document.getElementById('badge').textContent      = `${meta.zh} · Vol. ${meta.vol}`;
+    document.getElementById('badge-seal').textContent = meta.seal;
+    document.getElementById('title').textContent      = p.get('title') || '未命名文章';
+    document.getElementById('date').textContent       = p.get('date')  || '日期待定';
+    document.getElementById('foot-vol').textContent   = `卷 ${meta.vol} · ${meta.zh} · Article`;
     document.title = `${p.get('title') || '文章'} · Joey's Joy`;
   </script>
-
-  <script>
-    // ─── rain ───
-    (function(){
-      const canvas = document.getElementById('rain-canvas');
-      const ctx = canvas.getContext('2d');
-      let W, H;
-      function resize(){ W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
-      resize(); window.addEventListener('resize', resize);
-      const WIND = 0.17, ripples = [];
-      function rand(a,b){ return a + Math.random()*(b-a); }
-      function spawn(init){
-        const t = Math.random();
-        const layer = t<0.62?0:t<0.88?1:2;
-        const cfg=[[0.0050,0.55,0.038,0.13],[0.0090,1.40,0.082,0.35],[0.0155,2.80,0.138,0.62]][layer];
-        return{ x:Math.random(), y:init?Math.random():rand(-0.09,0),
-          vy:cfg[0]*rand(0.88,1.12), w:cfg[1]*rand(0.85,1.15),
-          len:cfg[2]*rand(0.80,1.30), op:cfg[3]*rand(0.80,1.20), layer };
-      }
-      const drops = Array.from({length:240},()=>spawn(true));
-      drops.sort((a,b)=>a.layer-b.layer);
-      function frame(){
-        ctx.clearRect(0,0,W,H);
-        for(let i=ripples.length-1;i>=0;i--){
-          const r=ripples[i];
-          ctx.beginPath(); ctx.ellipse(r.x,r.y,r.rx,r.rx*0.27,0,0,Math.PI*2);
-          ctx.strokeStyle=`rgba(155,210,255,${r.op})`; ctx.lineWidth=0.8; ctx.stroke();
-          r.rx+=2.6; r.op-=0.05; if(r.op<=0) ripples.splice(i,1);
-        }
-        drops.forEach((d,i)=>{
-          const x=d.x*W, y=d.y*H, tl=d.len*H, tx=x+WIND*tl, ty=y-tl;
-          const g=ctx.createLinearGradient(tx,ty,x,y);
-          g.addColorStop(0,'rgba(130,195,245,0)');
-          g.addColorStop(0.52,`rgba(172,220,255,${d.op*0.42})`);
-          g.addColorStop(1,`rgba(218,243,255,${d.op})`);
-          ctx.beginPath(); ctx.moveTo(tx,ty); ctx.lineTo(x,y);
-          ctx.strokeStyle=g; ctx.lineWidth=d.w; ctx.lineCap='round'; ctx.stroke();
-          if(d.layer>=1){
-            const gr=ctx.createRadialGradient(x,y,0,x,y,d.w*2.7);
-            gr.addColorStop(0,`rgba(198,234,255,${d.op*0.55})`);
-            gr.addColorStop(0.55,`rgba(172,216,255,${d.op*0.18})`);
-            gr.addColorStop(1,'rgba(140,196,246,0)');
-            ctx.beginPath(); ctx.arc(x,y,d.w*2.7,0,Math.PI*2); ctx.fillStyle=gr; ctx.fill();
-            ctx.beginPath(); ctx.arc(x,y,d.w*0.90,0,Math.PI*2);
-            ctx.fillStyle=`rgba(226,246,255,${d.op*0.80})`; ctx.fill();
-            ctx.beginPath(); ctx.arc(x-d.w*0.28,y-d.w*0.30,d.w*0.36,0,Math.PI*2);
-            ctx.fillStyle=`rgba(255,255,255,${d.op})`; ctx.fill();
-          }
-          d.y+=d.vy; d.x-=WIND*d.vy*0.55;
-          if(d.y>1.04){
-            if(d.layer===2&&Math.random()>0.37) ripples.push({x:d.x*W,y:H-1,rx:d.w*2.0,op:d.op*0.54});
-            drops[i]=spawn(false);
-          }
-        });
-        requestAnimationFrame(frame);
-      }
-      frame();
-    })();
-  </script>
+  <script src="../assets/zen-fx.js"></script>
 </body>
 </html>

@@ -4,469 +4,466 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>心居录 · Joey's Joy</title>
-  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Noto+Serif+SC:wght@300;400;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/zen.css">
   <style>
-    :root {
-      --glass-fill:   rgba(255,255,255,0.18);
-      --glass-border: rgba(255,255,255,0.50);
-      --warm-amber:   #c8a55a;
-      --cool-mist:    #7a93a8;
-      --jade:         #6b9e8d;
-      --text-primary: #1a2540;
-      --text-muted:   #475370;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Noto Serif SC', serif;
-      background:
-        radial-gradient(ellipse 75% 60% at 18% 15%, rgba(178,200,225,.85) 0%, transparent 55%),
-        radial-gradient(ellipse 70% 60% at 85% 85%, rgba(145,175,205,.75) 0%, transparent 55%),
-        radial-gradient(ellipse 55% 55% at 72% 28%, rgba(195,210,230,.55) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 50% at 28% 78%, rgba(155,180,210,.55) 0%, transparent 60%),
-        linear-gradient(160deg, #6a7d96 0%, #4f637c 50%, #5a6f88 100%);
-      color: var(--text-primary); min-height: 100vh;
-    }
-
-    #rain-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-    .light-bloom { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 1; }
-    .light-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(255,220,150,0.18) 0%, transparent 70%); top: -180px; left: -100px; }
-    .light-2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(180,220,200,0.16) 0%, transparent 70%); bottom: -80px; right: 60px; }
-
-    header {
+    .content {
       position: relative; z-index: 10;
-      padding: 52px 56px 40px;
-      border-bottom: 1px solid var(--glass-border);
-      background: rgba(255,255,255,.28);
-      backdrop-filter: blur(36px) saturate(1.4);
-      box-shadow: 0 1px 0 rgba(255,255,255,.55), 0 8px 40px rgba(20,30,55,.30);
+      max-width: 1380px; margin: 0 auto;
+      padding: 24px 56px 80px;
     }
-    .back-btn {
-      display: inline-flex; align-items: center; gap: 12px;
-      color: var(--text-primary); text-decoration: none;
-      font-family: 'Ma Shan Zheng', cursive;
-      font-size: 1.6rem; letter-spacing: 3px;
-      padding: 12px 28px;
-      border: 1px solid rgba(200,165,90,0.50);
-      border-radius: 1px;
-      background: rgba(255,235,180,0.30);
-      backdrop-filter: blur(12px);
-      transition: all 0.3s ease;
-      position: absolute; top: 28px; left: 56px;
-    }
-    .back-btn:hover { color: #5b3a08; background: rgba(255,235,180,0.55); border-color: rgba(200,165,90,0.85); transform: translateX(-4px); }
+    section { margin-bottom: 64px; }
 
-    h1 {
-      font-family: 'Ma Shan Zheng', cursive;
-      font-size: clamp(4rem, 9vw, 7.5rem); font-weight: 400;
-      letter-spacing: 8px;
-      background: linear-gradient(135deg, #1a2540 0%, #3b2a5e 50%, #1f3a5c 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      filter: drop-shadow(0 2px 1px rgba(255,255,255,.5)) drop-shadow(0 4px 12px rgba(20,30,55,.3));
-    }
-    .section-sub { margin-top: 14px; font-size: 1.2rem; letter-spacing: 4px; color: #3b4a6a; text-shadow: 0 1px 0 rgba(255,255,255,.4); text-transform: uppercase; }
-    .header-rule { width: 48px; height: 1px; background: linear-gradient(90deg, var(--warm-amber), transparent); margin-top: 16px; opacity: 0.65; }
-
-    .content { position: relative; z-index: 10; max-width: 1500px; margin: 0 auto; padding: 64px 56px 100px; }
-
-    /* ─── hero card: avatar + intro ─── */
+    /* ── HERO ─────────────────────────────────────── */
     .hero {
+      position: relative;
       display: grid;
-      grid-template-columns: 320px 1fr;
+      grid-template-columns: 280px 1fr auto;
       gap: 56px;
       align-items: center;
-      padding: 56px 60px;
-      background: rgba(255,255,255,.28);
-      backdrop-filter: blur(28px) saturate(1.4);
-      border: 1px solid var(--glass-border);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.65), 0 14px 40px rgba(20,30,55,.30);
-      margin-bottom: 64px;
+      padding: 56px 64px;
+      margin-bottom: 72px;
     }
 
+    .avatar-frame {
+      position: relative;
+      width: 260px; height: 260px;
+      padding: 12px;
+      border: 1px solid var(--copper);
+      background: color-mix(in srgb, var(--paper-warm) 60%, transparent);
+    }
+    .avatar-frame::before,
+    .avatar-frame::after {
+      content: '';
+      position: absolute;
+      width: 18px; height: 18px;
+      border: 1.2px solid var(--cinnabar);
+    }
+    .avatar-frame::before { top: -5px; left: -5px;  border-right: none; border-bottom: none; }
+    .avatar-frame::after  { bottom: -5px; right: -5px; border-left:  none; border-top:    none; }
+
     .avatar {
-      width: 320px; height: 320px;
-      border-radius: 50%;
+      width: 100%; height: 100%;
+      position: relative;
+      display: grid; place-items: center;
       background:
-        radial-gradient(circle at 35% 30%, rgba(255,255,255,.55) 0%, transparent 40%),
-        linear-gradient(135deg, #b8c5da 0%, #8497b3 100%);
-      border: 2px solid rgba(255,255,255,.7);
-      box-shadow: inset 0 4px 12px rgba(255,255,255,.4), 0 14px 40px rgba(20,30,55,.35);
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Ma Shan Zheng', cursive;
-      font-size: 7rem; color: #1a2540;
-      text-shadow: 0 2px 4px rgba(255,255,255,.5);
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,.55) 0%, transparent 45%),
+        linear-gradient(135deg, #c8a66f 0%, #8a6e47 100%);
+      font-family: var(--brush);
+      font-size: 7rem;
+      color: var(--paper);
+      text-shadow: 0 2px 10px rgba(0,0,0,.18);
+      overflow: hidden;
+    }
+    /* a lotus silhouette in the avatar bg */
+    .avatar::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='none' stroke='%23ffffff' stroke-opacity='0.15' stroke-width='0.5'><path d='M50 18 Q56 50 50 82 Q44 50 50 18 Z'/><path d='M50 18 Q66 40 50 82 Q34 40 50 18 Z'/><path d='M50 18 Q76 35 50 82 Q24 35 50 18 Z'/></g></svg>");
+      background-size: contain; background-repeat: no-repeat; background-position: center;
+    }
+    .avatar-meta {
+      position: absolute;
+      bottom: -28px; left: 0; right: 0;
+      display: flex; justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.20em;
+      color: var(--ink-ghost);
     }
 
     .hero-text h2 {
-      font-family: 'Ma Shan Zheng', cursive;
-      font-size: 4.5rem; font-weight: 400;
-      letter-spacing: 4px;
-      color: var(--text-primary);
-      margin-bottom: 18px; line-height: 1.1;
+      font-family: var(--brush);
+      font-size: clamp(3rem, 5.5vw, 4.6rem);
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: var(--ink);
+      margin-bottom: 12px;
+      line-height: 1;
     }
     .hero-text .role {
-      font-size: 1.4rem; letter-spacing: 4px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      margin-bottom: 28px;
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1.4rem;
+      color: var(--copper);
+      letter-spacing: 0.04em;
+      margin-bottom: 24px;
     }
     .hero-text .bio {
-      font-size: 1.35rem; line-height: 2.0;
-      color: var(--text-muted);
-      max-width: 640px;
+      font-family: var(--han);
+      font-size: 1.1rem;
+      line-height: 2.0;
+      color: var(--ink-soft);
+      max-width: 560px;
+      text-wrap: pretty;
+    }
+    .hero-text .bio::first-letter {
+      font-family: var(--brush);
+      font-size: 2.4em;
+      float: left;
+      line-height: 0.9;
+      padding: 4px 8px 0 0;
+      color: var(--cinnabar);
     }
 
-    /* ─── section header ─── */
-    .sec-head {
-      display: flex; align-items: baseline; gap: 22px;
-      margin: 0 0 32px 0;
+    .readout {
+      display: flex; flex-direction: column; gap: 18px;
+      min-width: 140px;
+      padding-left: 28px;
+      border-left: 1px solid var(--hair);
     }
-    .sec-head h3 {
-      font-family: 'Ma Shan Zheng', cursive;
-      font-size: 3.4rem; font-weight: 400;
-      letter-spacing: 5px;
-      background: linear-gradient(135deg, #1a2540 0%, #3b2a5e 50%, #1f3a5c 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      filter: drop-shadow(0 1px 1px rgba(255,255,255,.5));
-    }
-    .sec-head .en {
-      font-size: 1.1rem; letter-spacing: 4px;
-      color: var(--text-muted);
+    .readout .row { display: flex; flex-direction: column; gap: 4px; }
+    .readout .row .k {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.28em;
       text-transform: uppercase;
+      color: var(--ink-ghost);
     }
-    .sec-head .line {
+    .readout .row .v {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1.15rem;
+      color: var(--ink);
+    }
+    .readout .row .v.mono-v {
+      font-family: var(--mono);
+      font-style: normal;
+      font-size: 0.85rem;
+      color: var(--copper);
+      letter-spacing: 0.14em;
+    }
+
+    /* ── chapter divider (enso) ──────────────────── */
+    .chapter-mark {
+      display: flex; align-items: center; gap: 28px;
+      margin: 0 auto 36px;
+      max-width: 1380px;
+      padding: 0 56px;
+    }
+    .chapter-mark .line {
       flex: 1; height: 1px;
-      background: linear-gradient(90deg, rgba(31,56,85,.35), transparent);
+      background: linear-gradient(90deg, transparent, var(--hair) 50%, transparent);
     }
+    .chapter-mark .enso {
+      width: 38px; height: 38px;
+      flex: 0 0 38px;
+    }
+    .chapter-mark .enso svg { width: 100%; height: 100%; }
 
-    /* ─── hobbies grid ─── */
-    section { margin-bottom: 80px; }
-
-    .hobbies {
+    /* ── grid (hobbies / family) ─────────────────── */
+    .grid-4 {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 28px;
-    }
-    .hobby {
-      padding: 36px 32px;
-      background: rgba(255,255,255,.22);
-      backdrop-filter: blur(22px) saturate(1.3);
-      border: 1px solid var(--glass-border);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 8px 28px rgba(20,30,55,.25);
-      transition: background 0.3s ease, transform 0.35s cubic-bezier(.22,1,.36,1), box-shadow 0.3s ease;
-      cursor: pointer;
-    }
-    .hobby:hover {
-      background: rgba(255,255,255,.38);
-      transform: translateY(-4px);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 16px 40px rgba(20,30,55,.38);
+      gap: 18px;
     }
 
-    .hobby-icon {
-      width: 64px; height: 64px;
-      margin-bottom: 22px;
+    .card {
+      padding: 32px 28px 30px;
+      cursor: default;
+    }
+    .card .tag {
+      position: absolute; top: 14px; right: 14px;
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.24em;
+      color: var(--ink-ghost);
+    }
+    .card .icon {
+      width: 52px; height: 52px;
+      margin: 8px 0 20px;
       display: flex; align-items: center; justify-content: center;
     }
-    .hobby-icon svg { width: 100%; height: 100%; }
+    .card .icon svg { width: 100%; height: 100%; }
+    .card .icon svg :where(path, circle, line, rect, polygon) {
+      stroke: var(--moss); fill: none;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .card:hover .icon svg :where(path, circle, line, rect, polygon) {
+      stroke: var(--copper);
+    }
+    .card .ti {
+      font-family: var(--brush);
+      font-size: 2.0rem; letter-spacing: 0.14em;
+      color: var(--ink);
+      margin-bottom: 6px;
+      line-height: 1;
+    }
+    .card .en {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--copper);
+      margin-bottom: 14px;
+    }
+    .card .desc {
+      font-family: var(--han);
+      font-size: 0.95rem; line-height: 1.85;
+      color: var(--ink-soft);
+    }
 
-    .hobby-title {
-      font-family: 'Ma Shan Zheng', cursive;
-      font-size: 2.2rem; letter-spacing: 2px;
-      color: var(--text-primary);
-      margin-bottom: 10px;
+    /* family card */
+    .person { text-align: center; padding: 30px 24px 32px; }
+    .person .pa {
+      position: relative;
+      width: 110px; height: 110px;
+      margin: 8px auto 18px;
+      padding: 6px;
+      border: 1px solid var(--copper);
     }
-    .hobby-en {
-      font-size: 0.95rem; letter-spacing: 3px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      margin-bottom: 16px;
+    .person .pa::before,
+    .person .pa::after {
+      content: '';
+      position: absolute;
+      width: 10px; height: 10px;
+      border: 1px solid var(--cinnabar);
     }
-    .hobby-desc {
-      font-size: 1.15rem; line-height: 1.85;
-      color: var(--text-muted);
-    }
-
-    /* ─── family grid ─── */
-    .family {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 28px;
-    }
-    .person {
-      padding: 36px 32px 40px;
-      text-align: center;
-      background: rgba(255,255,255,.22);
-      backdrop-filter: blur(22px) saturate(1.3);
-      border: 1px solid var(--glass-border);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 8px 28px rgba(20,30,55,.25);
-      transition: background 0.3s ease, transform 0.35s cubic-bezier(.22,1,.36,1), box-shadow 0.3s ease;
-    }
-    .person:hover {
-      background: rgba(255,255,255,.38);
-      transform: translateY(-4px);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 16px 40px rgba(20,30,55,.38);
-    }
-    .person-avatar {
-      width: 140px; height: 140px;
-      border-radius: 50%;
-      margin: 0 auto 24px;
+    .person .pa::before { top: -3px; left: -3px;  border-right: none; border-bottom: none; }
+    .person .pa::after  { bottom: -3px; right: -3px; border-left:  none; border-top:    none; }
+    .person .pa .inner {
+      width: 100%; height: 100%;
+      display: grid; place-items: center;
       background:
-        radial-gradient(circle at 35% 30%, rgba(255,255,255,.55) 0%, transparent 40%),
-        linear-gradient(135deg, #c5d0e0 0%, #94a6c0 100%);
-      border: 2px solid rgba(255,255,255,.7);
-      box-shadow: inset 0 3px 8px rgba(255,255,255,.4), 0 6px 20px rgba(20,30,55,.30);
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Ma Shan Zheng', cursive;
-      font-size: 3.6rem; color: #1a2540;
-    }
-    .person-name {
-      font-family: 'Ma Shan Zheng', cursive;
-      font-size: 2.4rem; letter-spacing: 3px;
-      color: var(--text-primary);
-      margin-bottom: 8px;
-    }
-    .person-role {
-      font-size: 1.0rem; letter-spacing: 4px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      margin-bottom: 18px;
-    }
-    .person-note {
-      font-size: 1.15rem; line-height: 1.85;
-      color: var(--text-muted);
-      max-width: 280px; margin: 0 auto;
-    }
-
-    footer {
-      position: relative; z-index: 10;
-      text-align: center; padding: 36px;
-      font-size: 0.95rem; letter-spacing: 2px;
-      color: var(--text-muted);
-      border-top: 1px solid var(--glass-border);
-      background: rgba(255,255,255,.28);
-      backdrop-filter: blur(20px);
-    }
-
-    .rainbow-text {
-      background: linear-gradient(90deg,
-        #ff6b6b, #ffa94d, #ffe066, #69db7c,
-        #4dabf7, #845ef7, #f06595, #ff6b6b
-      );
-      background-size: 250% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: rainbow-flow 4s linear infinite;
-      font-weight: 600;
-    }
-    @keyframes rainbow-flow {
-      0%   { background-position: 0% center; }
-      100% { background-position: 250% center; }
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,.6) 0%, transparent 45%),
+        linear-gradient(135deg, #b89169 0%, #7e6342 100%);
+      font-family: var(--brush);
+      font-size: 3.2rem;
+      color: var(--paper);
+      text-shadow: 0 1px 4px rgba(0,0,0,.18);
     }
 
     @media (max-width: 1100px) {
       .hero { grid-template-columns: 1fr; text-align: center; }
-      .avatar { margin: 0 auto; }
-      .hobbies { grid-template-columns: repeat(2, 1fr); }
-      .family { grid-template-columns: repeat(2, 1fr); }
+      .avatar-frame { margin: 0 auto; }
+      .readout { border-left: none; border-top: 1px solid var(--hair); padding-left: 0; padding-top: 18px; flex-direction: row; flex-wrap: wrap; gap: 24px; justify-content: center; }
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
     }
-    @media (max-width: 700px) {
-      .hobbies, .family { grid-template-columns: 1fr; }
-      .content { padding: 40px 24px; }
+    @media (max-width: 640px) {
+      .content { padding: 22px 22px 60px; }
+      .hero { padding: 32px 24px; }
+      .grid-4 { grid-template-columns: 1fr; }
     }
   </style>
 </head>
-<body>
-  <canvas id="rain-canvas"></canvas>
-  <div class="light-bloom light-1"></div>
-  <div class="light-bloom light-2"></div>
+<body data-theme="light" data-fx="petals">
 
-  <header>
-    <a href="../index.html" class="back-btn">← 返回主页</a>
-    <h1>心居录</h1>
-    <p class="section-sub">Personal Profile · Hobbies &amp; Family</p>
-    <div class="header-rule"></div>
-  </header>
+  <div class="zen-field"></div>
+  <div class="zen-grain"></div>
+  <div class="zen-vignette"></div>
 
-  <div class="content">
+  <div class="zen-stage">
 
-    <!-- ─── Hero ─── -->
-    <div class="hero">
-      <div class="avatar">乔</div>
-      <div class="hero-text">
-        <h2>Joey</h2>
-        <div class="role">Curator · Dreamer · Daughter</div>
-        <div class="bio">
-          一句简短的自我介绍占位 — 这里写你想让访客先读到的几句话。可以是关于你正在做什么、对什么着迷、当下的状态。两到三句最好。
+    <header class="zen-topbar zen-rise">
+      <div class="left">
+        <a href="../index.html" class="zen-back">
+          <span class="arrow"></span>
+          <span>返 · Return</span>
+        </a>
+        <span class="zen-brand">
+          <span class="seal">乔</span>
+          <span class="mono dim">Joey&rsquo;s Joy</span>
+        </span>
+      </div>
+      <div class="right">
+        <span class="mono dim">卷 · 01 / 05</span>
+        <span class="zen-live"><span class="pulse"></span><span class="mono small ghost">在线 · 26.05.24</span></span>
+      </div>
+    </header>
+
+    <header class="zen-head zen-rise d1">
+      <div class="zen-crumb">
+        <span>Index</span>
+        <span class="sep">/</span>
+        <span>Volume 01</span>
+        <span class="sep">/</span>
+        <span class="here">心居录</span>
+      </div>
+      <h1>心 居 录<span class="h1-seal">居</span></h1>
+      <div class="en-title"><em>Profile, Family &amp; the Quiet Hours</em></div>
+      <div class="rule"></div>
+    </header>
+
+    <main class="content">
+
+      <!-- HERO -->
+      <div class="hero zen-card zen-corners zen-rise d2">
+        <span class="c-bl"></span><span class="c-br"></span>
+
+        <div class="avatar-frame">
+          <div class="avatar">乔</div>
+          <div class="avatar-meta">
+            <span>ID · 0001</span>
+            <span>v.II</span>
+          </div>
+        </div>
+
+        <div class="hero-text">
+          <h2>Joey</h2>
+          <div class="role"><em>Curator · Dreamer · Daughter</em></div>
+          <p class="bio">一句简短的自我介绍占位 — 这里写你想让访客先读到的几句话。可以是关于你正在做什么、对什么着迷、当下的状态。两到三句最好，留些余白让读者自己想象。</p>
+        </div>
+
+        <div class="readout">
+          <div class="row"><span class="k">居 · Location</span><span class="v"><em>Somewhere</em></span></div>
+          <div class="row"><span class="k">卷 · Volumes</span><span class="v mono-v">05 / 05</span></div>
+          <div class="row"><span class="k">立 · Established</span><span class="v mono-v">since MMXX</span></div>
+          <div class="row"><span class="k">气 · Signal</span><span class="v mono-v">▍▍▍▍▍</span></div>
         </div>
       </div>
-    </div>
 
-    <!-- ─── Hobbies ─── -->
-    <section>
-      <div class="sec-head">
-        <h3>闲趣</h3>
-        <span class="en">Hobbies &amp; Interests</span>
+      <!-- chapter mark (enso) -->
+      <div class="chapter-mark">
+        <span class="line"></span>
+        <span class="enso">
+          <svg viewBox="0 0 40 40">
+            <path d="M 20 4 A 16 16 0 1 1 7 28"
+                  fill="none" stroke="#2a1d12" stroke-width="2" stroke-linecap="round"
+                  stroke-dasharray="100" stroke-dashoffset="0"/>
+          </svg>
+        </span>
         <span class="line"></span>
       </div>
 
-      <div class="hobbies">
+      <!-- hobbies -->
+      <section>
+        <div class="zen-sechead">
+          <span class="idx">— 01 · 01</span>
+          <h2>闲 趣</h2>
+          <span class="en"><em>Hobbies &amp; Interests</em></span>
+          <span class="line"></span>
+          <span class="mono ghost">04 entries</span>
+        </div>
 
-        <div class="hobby">
-          <div class="hobby-icon">
-            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 50 Q32 18 52 50" stroke="#3a2a08" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.85"/>
-              <circle cx="32" cy="16" r="4" fill="#3a2a08" opacity="0.85"/>
-            </svg>
+        <div class="grid-4">
+
+          <div class="card zen-card zen-corners">
+            <span class="c-bl"></span><span class="c-br"></span>
+            <span class="tag">闲 · 01</span>
+            <div class="icon">
+              <svg viewBox="0 0 56 56">
+                <path d="M10 44 Q28 14 46 44"/>
+                <circle cx="28" cy="12" r="3"/>
+              </svg>
+            </div>
+            <div class="ti">摄影</div>
+            <div class="en"><em>Photography</em></div>
+            <div class="desc">占位描述 — 你喜欢拍什么、相机型号或风格倾向都可以放这里。</div>
           </div>
-          <div class="hobby-title">摄影</div>
-          <div class="hobby-en">Photography</div>
-          <div class="hobby-desc">占位描述 — 你喜欢拍什么、相机型号或风格倾向都可以放这里。</div>
-        </div>
 
-        <div class="hobby">
-          <div class="hobby-icon">
-            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="14" y="14" width="36" height="40" rx="2" stroke="#142a4a" stroke-width="2.2" fill="none"/>
-              <line x1="20" y1="24" x2="44" y2="24" stroke="#142a4a" stroke-width="1.6" opacity="0.7"/>
-              <line x1="20" y1="32" x2="44" y2="32" stroke="#142a4a" stroke-width="1.6" opacity="0.7"/>
-              <line x1="20" y1="40" x2="38" y2="40" stroke="#142a4a" stroke-width="1.6" opacity="0.7"/>
-            </svg>
+          <div class="card zen-card zen-corners">
+            <span class="c-bl"></span><span class="c-br"></span>
+            <span class="tag">闲 · 02</span>
+            <div class="icon">
+              <svg viewBox="0 0 56 56">
+                <rect x="12" y="12" width="32" height="36"/>
+                <line x1="18" y1="22" x2="38" y2="22" opacity="0.55"/>
+                <line x1="18" y1="30" x2="38" y2="30" opacity="0.55"/>
+                <line x1="18" y1="38" x2="32" y2="38" opacity="0.55"/>
+              </svg>
+            </div>
+            <div class="ti">读书</div>
+            <div class="en"><em>Reading</em></div>
+            <div class="desc">占位描述 — 喜欢的题材、近期书单或印象最深的几本书。</div>
           </div>
-          <div class="hobby-title">读书</div>
-          <div class="hobby-en">Reading</div>
-          <div class="hobby-desc">占位描述 — 喜欢的题材、近期书单或印象最深的几本书。</div>
-        </div>
 
-        <div class="hobby">
-          <div class="hobby-icon">
-            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M16 44 L28 28 L36 36 L48 20" stroke="#0e3a2c" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="48" cy="20" r="3" fill="#0e3a2c" opacity="0.85"/>
-              <line x1="16" y1="50" x2="48" y2="50" stroke="#0e3a2c" stroke-width="1.4" opacity="0.5"/>
-            </svg>
+          <div class="card zen-card zen-corners">
+            <span class="c-bl"></span><span class="c-br"></span>
+            <span class="tag">闲 · 03</span>
+            <div class="icon">
+              <svg viewBox="0 0 56 56">
+                <path d="M10 40 L22 24 L30 32 L44 16"/>
+                <circle cx="44" cy="16" r="2.2"/>
+                <line x1="10" y1="46" x2="46" y2="46" opacity=".35"/>
+              </svg>
+            </div>
+            <div class="ti">徒步</div>
+            <div class="en"><em>Hiking</em></div>
+            <div class="desc">占位描述 — 偏爱的山线、自然里让你最放松的瞬间。</div>
           </div>
-          <div class="hobby-title">徒步</div>
-          <div class="hobby-en">Hiking</div>
-          <div class="hobby-desc">占位描述 — 偏爱的山线、自然里让你最放松的瞬间。</div>
-        </div>
 
-        <div class="hobby">
-          <div class="hobby-icon">
-            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M20 18 L20 44 Q20 50 26 50 Q32 50 32 44 L32 22" stroke="#3a2a08" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="38" cy="20" r="6" fill="none" stroke="#3a2a08" stroke-width="2" opacity="0.8"/>
-              <circle cx="22" cy="46" r="4" fill="#3a2a08" opacity="0.7"/>
-            </svg>
+          <div class="card zen-card zen-corners">
+            <span class="c-bl"></span><span class="c-br"></span>
+            <span class="tag">闲 · 04</span>
+            <div class="icon">
+              <svg viewBox="0 0 56 56">
+                <path d="M18 16 L18 40 Q18 46 24 46 Q30 46 30 40 L30 18"/>
+                <circle cx="36" cy="16" r="4.5"/>
+                <circle cx="21" cy="42" r="2.6" stroke="none" fill="currentColor" opacity=".65"/>
+              </svg>
+            </div>
+            <div class="ti">音乐</div>
+            <div class="en"><em>Music</em></div>
+            <div class="desc">占位描述 — 喜欢的曲风、乐器或正在听的专辑。</div>
           </div>
-          <div class="hobby-title">音乐</div>
-          <div class="hobby-en">Music</div>
-          <div class="hobby-desc">占位描述 — 喜欢的曲风、乐器或正在听的专辑。</div>
+
+        </div>
+      </section>
+
+      <!-- family -->
+      <section>
+        <div class="zen-sechead">
+          <span class="idx">— 01 · 02</span>
+          <h2>家 人</h2>
+          <span class="en"><em>Family · 缘起</em></span>
+          <span class="line"></span>
+          <span class="mono ghost">04 entries</span>
         </div>
 
-      </div>
-    </section>
+        <div class="grid-4">
 
-    <!-- ─── Family ─── -->
-    <section>
-      <div class="sec-head">
-        <h3>家人</h3>
-        <span class="en">Family</span>
-        <span class="line"></span>
-      </div>
+          <div class="person zen-card zen-corners">
+            <span class="c-bl"></span><span class="c-br"></span>
+            <span class="tag">缘 · 01</span>
+            <div class="pa"><div class="inner">父</div></div>
+            <div class="ti">父亲</div>
+            <div class="en"><em>Father</em></div>
+            <div class="desc" style="max-width:220px;margin:0 auto;">占位介绍 — 一段简短的话，关于他是怎样的人或你们之间的故事。</div>
+          </div>
 
-      <div class="family">
+          <div class="person zen-card zen-corners">
+            <span class="c-bl"></span><span class="c-br"></span>
+            <span class="tag">缘 · 02</span>
+            <div class="pa"><div class="inner">母</div></div>
+            <div class="ti">母亲</div>
+            <div class="en"><em>Mother</em></div>
+            <div class="desc" style="max-width:220px;margin:0 auto;">占位介绍 — 一段简短的话，关于她是怎样的人或你们之间的故事。</div>
+          </div>
 
-        <div class="person">
-          <div class="person-avatar">父</div>
-          <div class="person-name">父亲</div>
-          <div class="person-role">Father</div>
-          <div class="person-note">占位介绍 — 一段简短的话，关于他是怎样的人或你们之间的故事。</div>
+          <div class="person zen-card zen-corners">
+            <span class="c-bl"></span><span class="c-br"></span>
+            <span class="tag">缘 · 03</span>
+            <div class="pa"><div class="inner">妻</div></div>
+            <div class="ti">老婆</div>
+            <div class="en"><em>Wife</em></div>
+            <div class="desc" style="max-width:220px;margin:0 auto;">占位介绍 — 一段简短的话，关于她和你们的生活点滴。</div>
+          </div>
+
+          <div class="person zen-card zen-corners">
+            <span class="c-bl"></span><span class="c-br"></span>
+            <span class="tag">缘 · 04</span>
+            <div class="pa"><div class="inner">子</div></div>
+            <div class="ti">儿子</div>
+            <div class="en"><em>Son</em></div>
+            <div class="desc" style="max-width:220px;margin:0 auto;">占位介绍 — 一段简短的话，关于他的个性或让你印象深刻的瞬间。</div>
+          </div>
+
         </div>
+      </section>
 
-        <div class="person">
-          <div class="person-avatar">母</div>
-          <div class="person-name">母亲</div>
-          <div class="person-role">Mother</div>
-          <div class="person-note">占位介绍 — 一段简短的话，关于她是怎样的人或你们之间的故事。</div>
-        </div>
+    </main>
 
-        <div class="person">
-          <div class="person-avatar">妻</div>
-          <div class="person-name">老婆</div>
-          <div class="person-role">Wife</div>
-          <div class="person-note">占位介绍 — 一段简短的话，关于她和你们的生活点滴。</div>
-        </div>
-
-        <div class="person">
-          <div class="person-avatar">子</div>
-          <div class="person-name">儿子</div>
-          <div class="person-role">Son</div>
-          <div class="person-note">占位介绍 — 一段简短的话，关于他的个性或让你印象深刻的瞬间。</div>
-        </div>
-
-      </div>
-    </section>
+    <footer class="zen-foot">
+      <span class="mono ghost">© MMXXVI · Joey&rsquo;s Joy</span>
+      <span class="mono ghost">卷一 · 心居录 · Profile</span>
+      <span class="mono ghost">Theme · Linen White</span>
+    </footer>
 
   </div>
 
-  <footer>© 2026 <span class="rainbow-text">Joey's Joy</span></footer>
-
-  <script>
-    (function(){
-      const canvas = document.getElementById('rain-canvas');
-      const ctx = canvas.getContext('2d');
-      let W, H;
-      function resize(){ W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
-      resize(); window.addEventListener('resize', resize);
-      const WIND = 0.17, ripples = [];
-      function rand(a,b){ return a + Math.random()*(b-a); }
-      function spawn(init){
-        const t = Math.random();
-        const layer = t<0.62?0:t<0.88?1:2;
-        const cfg=[[0.0050,0.55,0.038,0.13],[0.0090,1.40,0.082,0.35],[0.0155,2.80,0.138,0.62]][layer];
-        return{ x:Math.random(), y:init?Math.random():rand(-0.09,0),
-          vy:cfg[0]*rand(0.88,1.12), w:cfg[1]*rand(0.85,1.15),
-          len:cfg[2]*rand(0.80,1.30), op:cfg[3]*rand(0.80,1.20), layer };
-      }
-      const drops = Array.from({length:240},()=>spawn(true));
-      drops.sort((a,b)=>a.layer-b.layer);
-      function frame(){
-        ctx.clearRect(0,0,W,H);
-        for(let i=ripples.length-1;i>=0;i--){
-          const r=ripples[i];
-          ctx.beginPath(); ctx.ellipse(r.x,r.y,r.rx,r.rx*0.27,0,0,Math.PI*2);
-          ctx.strokeStyle=`rgba(155,210,255,${r.op})`; ctx.lineWidth=0.8; ctx.stroke();
-          r.rx+=2.6; r.op-=0.05; if(r.op<=0) ripples.splice(i,1);
-        }
-        drops.forEach((d,i)=>{
-          const x=d.x*W, y=d.y*H, tl=d.len*H, tx=x+WIND*tl, ty=y-tl;
-          const g=ctx.createLinearGradient(tx,ty,x,y);
-          g.addColorStop(0,'rgba(130,195,245,0)');
-          g.addColorStop(0.52,`rgba(172,220,255,${d.op*0.42})`);
-          g.addColorStop(1,`rgba(218,243,255,${d.op})`);
-          ctx.beginPath(); ctx.moveTo(tx,ty); ctx.lineTo(x,y);
-          ctx.strokeStyle=g; ctx.lineWidth=d.w; ctx.lineCap='round'; ctx.stroke();
-          if(d.layer>=1){
-            const gr=ctx.createRadialGradient(x,y,0,x,y,d.w*2.7);
-            gr.addColorStop(0,`rgba(198,234,255,${d.op*0.55})`);
-            gr.addColorStop(0.55,`rgba(172,216,255,${d.op*0.18})`);
-            gr.addColorStop(1,'rgba(140,196,246,0)');
-            ctx.beginPath(); ctx.arc(x,y,d.w*2.7,0,Math.PI*2); ctx.fillStyle=gr; ctx.fill();
-            ctx.beginPath(); ctx.arc(x,y,d.w*0.90,0,Math.PI*2);
-            ctx.fillStyle=`rgba(226,246,255,${d.op*0.80})`; ctx.fill();
-            ctx.beginPath(); ctx.arc(x-d.w*0.28,y-d.w*0.30,d.w*0.36,0,Math.PI*2);
-            ctx.fillStyle=`rgba(255,255,255,${d.op})`; ctx.fill();
-          }
-          d.y+=d.vy; d.x-=WIND*d.vy*0.55;
-          if(d.y>1.04){
-            if(d.layer===2&&Math.random()>0.37) ripples.push({x:d.x*W,y:H-1,rx:d.w*2.0,op:d.op*0.54});
-            drops[i]=spawn(false);
-          }
-        });
-        requestAnimationFrame(frame);
-      }
-      frame();
-    })();
-  </script>
+  <script src="../assets/zen-fx.js"></script>
 </body>
 </html>

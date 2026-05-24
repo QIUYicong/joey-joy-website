@@ -4,411 +4,403 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>问穹鼎 · Joey's Joy</title>
-  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Noto+Serif+SC:wght@300;400;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/zen.css">
   <style>
-    :root {
-      --glass-fill:   rgba(255,255,255,0.055);
-      --glass-border: rgba(255,255,255,0.50);
-      --warm-amber:   #c8a55a;
-      --cool-mist:    #7a93a8;
-      --jade:         #6b9e8d;
-      --text-primary: #1a2540;
-      --text-muted:   #475370;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Noto Serif SC', serif;
-      background:
-        radial-gradient(ellipse 75% 60% at 18% 15%, rgba(178,200,225,.85) 0%, transparent 55%),
-        radial-gradient(ellipse 70% 60% at 85% 85%, rgba(145,175,205,.75) 0%, transparent 55%),
-        radial-gradient(ellipse 55% 55% at 72% 28%, rgba(195,210,230,.55) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 50% at 28% 78%, rgba(155,180,210,.55) 0%, transparent 60%),
-        linear-gradient(160deg, #6a7d96 0%, #4f637c 50%, #5a6f88 100%);
-      color: var(--text-primary); min-height: 100vh;
-    }
-
-    #rain-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-    .light-bloom { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 1; }
-    .light-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(255,220,150,0.18) 0%, transparent 70%); top: -180px; left: -100px; }
-    .light-2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(180,220,200,0.16) 0%, transparent 70%); bottom: -80px; right: 60px; }
-
-    header {
+    .content {
       position: relative; z-index: 10;
-      padding: 52px 56px 40px;
-      border-bottom: 1px solid var(--glass-border);
-      background: rgba(255,255,255,.28);
-      backdrop-filter: blur(36px) saturate(1.4);
-      box-shadow: 0 1px 0 rgba(255,255,255,.07), 0 8px 40px rgba(0,0,0,.5);
+      max-width: 980px; margin: 0 auto;
+      padding: 24px 56px 80px;
     }
 
-    .back-btn {
-      display: inline-flex; align-items: center; gap: 12px;
-      color: var(--text-primary); text-decoration: none;
-      font-family: 'Ma Shan Zheng', cursive;
-      font-size: 1.6rem; letter-spacing: 3px;
-      padding: 12px 28px;
-      border: 1px solid rgba(200,165,90,0.35);
-      border-radius: 1px;
-      background: rgba(200,165,90,0.07);
-      backdrop-filter: blur(12px);
-      transition: all 0.3s ease;
-      position: absolute; top: 28px; left: 56px;
+    /* mandala behind hero (faded geometric circle) */
+    .mandala-bg {
+      position: absolute;
+      top: 80px; right: -120px;
+      width: 480px; height: 480px;
+      pointer-events: none;
+      opacity: 0.10;
+      z-index: 0;
     }
-    .back-btn:hover { color: var(--warm-amber); background: rgba(200,165,90,0.14); border-color: rgba(200,165,90,0.65); transform: translateX(-4px); }
-
-    h1 {
-      font-family: 'Ma Shan Zheng', cursive;
-      font-size: clamp(4rem, 9vw, 7.5rem); font-weight: 400;
-      letter-spacing: 8px;
-      background: linear-gradient(135deg, #1a2540 0%, #3b2a5e 50%, #1f3a5c 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      filter: drop-shadow(0 2px 1px rgba(255,255,255,.5)) drop-shadow(0 4px 12px rgba(20,30,55,.3));
+    .mandala-bg svg { width: 100%; height: 100%; }
+    .mandala-bg svg :where(path, circle, line, polygon) {
+      stroke: var(--ink); fill: none; stroke-width: 0.8;
     }
-    .section-sub { margin-top: 14px; font-size: 1.2rem; letter-spacing: 3px; color: #3b4a6a; text-shadow: 0 1px 0 rgba(255,255,255,.4); text-transform: uppercase; }
-    .header-rule { width: 48px; height: 1px; background: linear-gradient(90deg, var(--warm-amber), transparent); margin-top: 16px; opacity: 0.65; }
+    .mandala-bg .spin { animation: zen-mandala 200s linear infinite; transform-origin: 50% 50%; }
+    @keyframes zen-mandala { to { transform: rotate(360deg); } }
 
-    .content { position: relative; z-index: 10; max-width: 900px; margin: 0 auto; padding: 64px 56px 80px; }
-
-    .research-item {
-      padding: 36px 32px;
-      margin-bottom: 10px;
-      border: 1px solid var(--glass-border);
-      border-radius: 1px;
-      background: rgba(255,255,255,.22);
-      backdrop-filter: blur(22px) saturate(1.3);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 8px 32px rgba(20,30,55,.35), 0 1px 2px rgba(20,30,55,.20);
-      transition: background 0.35s ease, box-shadow 0.35s ease;
+    /* ── item rows ───────────────────────────────────── */
+    .item {
+      padding: 32px 36px;
+      margin-bottom: 14px;
       display: grid;
-      grid-template-columns: 68px 1fr;
+      grid-template-columns: 80px 1fr;
       gap: 28px;
       align-items: start;
+      cursor: pointer;
     }
-    .research-item:last-child { margin-bottom: 0; }
-    .research-item:hover { background: rgba(255,255,255,.38); box-shadow: inset 0 1px 0 rgba(255,255,255,.42), 0 6px 28px rgba(0,0,0,.5); }
-    .research-item:hover .research-title { color: var(--warm-amber); }
-
-    .research-index {
-      font-family: 'Ma Shan Zheng', cursive;
-      font-size: 2.6rem; color: var(--text-muted);
-      opacity: 0.45; line-height: 1; padding-top: 4px;
-      transition: opacity 0.3s ease;
+    .item .idx {
+      font-family: var(--brush);
+      font-size: 2.6rem;
+      color: var(--copper);
+      opacity: 0.5;
+      line-height: 1;
+      padding-top: 4px;
+      transition: opacity .35s, color .35s;
     }
-    .research-item:hover .research-index { opacity: 0.75; color: var(--warm-amber); }
-
-    .research-title { font-family: 'Ma Shan Zheng', cursive; font-size: 2.8rem; font-weight: 400; letter-spacing: 2px; color: var(--text-primary); margin-bottom: 14px; transition: color 0.3s ease; }
-    .research-date { font-size: 1.1rem; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 18px; }
-    .research-desc { font-size: 1.2rem; line-height: 2.0; color: var(--text-muted); margin-bottom: 22px; }
-
-    .research-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .item:hover .idx { opacity: 1; color: var(--cinnabar); }
+    .item .ti {
+      font-family: var(--brush);
+      font-size: 2.4rem; letter-spacing: 0.10em;
+      color: var(--ink);
+      margin-bottom: 12px;
+      line-height: 1.15;
+      transition: color .3s;
+    }
+    .item:hover .ti { color: var(--copper-deep); }
+    .item .date {
+      font-family: var(--mono);
+      font-size: 0.74rem; letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      margin-bottom: 18px;
+    }
+    .item .desc {
+      font-family: var(--han);
+      font-size: 1.05rem; line-height: 1.9;
+      color: var(--ink-soft);
+      margin-bottom: 22px;
+    }
+    .tags { display: flex; gap: 8px; flex-wrap: wrap; }
     .tag {
-      font-size: 0.85rem; letter-spacing: 1.5px;
-      color: #1f3855;
-      padding: 6px 16px;
-      border: 1px solid rgba(31,56,85,0.30);
-      border-radius: 1px;
-      transition: all 0.3s ease;
+      font-family: var(--mono);
+      font-size: 0.70rem; letter-spacing: 0.18em;
+      color: var(--ink-soft);
+      padding: 5px 12px;
+      border: 1px solid var(--hair);
+      background: color-mix(in srgb, var(--paper-warm) 40%, transparent);
+      text-transform: uppercase;
+      transition: all .3s;
     }
-    .tag:hover { background: rgba(122,147,168,0.08); border-color: rgba(122,147,168,0.4); }
+    .tag:hover { color: var(--copper); border-color: var(--copper); }
 
-    /* ─── featured DB-plan entry ─── */
-    .research-item.featured {
+    /* ── featured (db plan) ────────────────────────── */
+    .item.featured {
       grid-template-columns: 1fr;
       gap: 0;
       padding: 44px 44px 48px;
-      background: rgba(255,255,255,.26);
     }
-    .featured-header {
-      display: flex; align-items: baseline; gap: 16px;
-      margin-bottom: 8px;
+    .featured-head {
+      display: flex; align-items: baseline; gap: 18px;
+      margin-bottom: 10px;
     }
-    .featured-header .research-index {
-      padding-top: 0;
-    }
-    .featured-header .tag-featured {
-      display: inline-block;
-      padding: 4px 14px;
-      font-size: 0.85rem; letter-spacing: 3px;
-      color: #5b3a08;
-      background: rgba(255,235,180,.55);
-      border: 1px solid rgba(200,165,90,.55);
-      text-transform: uppercase;
+    .featured-head .idx { padding-top: 0; }
+    .featured-head .badge {
       margin-left: auto;
+      padding: 5px 14px;
+      font-family: var(--mono);
+      font-size: 0.68rem; letter-spacing: 0.28em;
+      color: var(--paper);
+      background: var(--cinnabar);
+      text-transform: uppercase;
     }
+
     .plan-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 18px;
-      margin: 28px 0 22px;
+      gap: 16px;
+      margin: 30px 0 22px;
     }
     .plan {
-      padding: 24px 26px;
-      background: rgba(255,255,255,.32);
-      border: 1px solid var(--glass-border);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 4px 14px rgba(20,30,55,.18);
-      transition: background .3s, transform .3s, box-shadow .3s;
+      padding: 22px 24px;
+      background: color-mix(in srgb, var(--paper-warm) 60%, transparent);
+      border: 1px solid var(--hair);
+      transition: all .35s;
     }
-    .plan:hover { background: rgba(255,255,255,.45); transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 8px 22px rgba(20,30,55,.28); }
+    .plan:hover {
+      background: color-mix(in srgb, var(--paper-warm) 85%, transparent);
+      transform: translateY(-2px);
+      border-color: color-mix(in srgb, var(--copper) 40%, var(--hair));
+    }
     .plan-head {
       display: flex; align-items: baseline; justify-content: space-between;
-      margin-bottom: 10px; padding-bottom: 10px;
-      border-bottom: 1px solid rgba(31,56,85,.18);
+      margin-bottom: 12px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--hair-soft);
     }
     .plan-name {
-      font-family: 'Ma Shan Zheng', cursive;
-      font-size: 1.7rem; letter-spacing: 2px;
-      color: var(--text-primary);
+      font-family: var(--brush);
+      font-size: 1.5rem; letter-spacing: 0.10em;
+      color: var(--ink);
     }
     .plan-level {
-      font-size: 0.8rem; letter-spacing: 2px;
-      color: #5b3a08;
-      padding: 3px 10px;
-      background: rgba(255,235,180,.55);
-      border: 1px solid rgba(200,165,90,.4);
+      font-family: var(--mono);
+      font-size: 0.62rem; letter-spacing: 0.24em;
+      color: var(--copper);
+      padding: 3px 9px;
+      border: 1px solid var(--copper);
       text-transform: uppercase;
     }
-    .plan-line { font-size: 1.0rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 8px; }
-    .plan-line strong { color: #1a2540; font-weight: 600; }
-    .plan-pros, .plan-cons { font-size: 0.95rem; line-height: 1.65; color: var(--text-muted); }
-    .plan-pros { color: #1c4538; }
-    .plan-cons { color: #6b2a2a; }
+    .plan-line { font-family: var(--han); font-size: 0.95rem; line-height: 1.75; color: var(--ink-soft); margin-bottom: 10px; }
+    .plan-line strong { color: var(--ink); font-weight: 600; }
+    .plan-line code {
+      font-family: var(--mono); font-size: 0.85rem;
+      background: color-mix(in srgb, var(--ink) 8%, transparent);
+      padding: 1px 6px; border-radius: 2px;
+    }
+    .plan-pros, .plan-cons { font-family: var(--han); font-size: 0.92rem; line-height: 1.7; }
+    .plan-pros { color: var(--moss-deep); }
+    .plan-cons { color: var(--cinnabar); }
+
     .recommendation {
-      margin-top: 22px; padding: 18px 22px;
-      background: rgba(255,235,180,.30);
-      border: 1px dashed rgba(200,165,90,.55);
-      font-size: 1.05rem; color: #5b3a08;
+      margin-top: 24px; padding: 20px 24px;
+      background: color-mix(in srgb, var(--copper) 8%, transparent);
+      border: 1px dashed var(--copper);
+      font-family: var(--han);
+      font-size: 1rem; color: var(--copper-deep);
       line-height: 1.85;
     }
-    .recommendation strong { color: #1a2540; }
-    @media (max-width: 800px) { .plan-grid { grid-template-columns: 1fr; } }
+    .recommendation strong { color: var(--ink); }
 
-    footer { position: relative; z-index: 10; text-align: center; padding: 36px; font-size: 0.9rem; letter-spacing: 2px; color: var(--text-muted); border-top: 1px solid var(--glass-border); background: rgba(255,255,255,.25); backdrop-filter: blur(20px); }
+    @media (max-width: 800px) {
+      .plan-grid { grid-template-columns: 1fr; }
+      .content { padding: 22px 22px 60px; }
+      .item { padding: 24px 24px; grid-template-columns: 50px 1fr; gap: 16px; }
+      .item.featured { padding: 28px 24px; }
+    }
   </style>
 </head>
-<body>
-  <canvas id="rain-canvas"></canvas>
-  <div class="light-bloom light-1"></div>
-  <div class="light-bloom light-2"></div>
+<body data-theme="light" data-fx="petals">
 
-  <header>
-    <a href="../index.html" class="back-btn">← 返回主页</a>
-    <h1>问穹鼎</h1>
-    <p class="section-sub">Research Discoveries &amp; Scientific Findings</p>
-    <div class="header-rule"></div>
-  </header>
+  <div class="zen-field"></div>
+  <div class="zen-grain"></div>
+  <div class="zen-vignette"></div>
 
-  <div class="content">
+  <div class="zen-stage">
 
-    <div class="research-item featured">
-      <div class="featured-header">
-        <div class="research-index">壹</div>
+    <header class="zen-topbar zen-rise">
+      <div class="left">
+        <a href="../index.html" class="zen-back">
+          <span class="arrow"></span>
+          <span>返 · Return</span>
+        </a>
+        <span class="zen-brand">
+          <span class="seal">乔</span>
+          <span class="mono dim">Joey&rsquo;s Joy</span>
+        </span>
+      </div>
+      <div class="right">
+        <span class="mono dim">卷 · 03 / 05</span>
+        <span class="zen-live"><span class="pulse"></span><span class="mono small ghost">在线 · 26.05.24</span></span>
+      </div>
+    </header>
+
+    <header class="zen-head zen-rise d1" style="position:relative;">
+      <!-- background mandala -->
+      <div class="mandala-bg">
+        <svg viewBox="0 0 480 480" class="spin">
+          <circle cx="240" cy="240" r="220"/>
+          <circle cx="240" cy="240" r="180" stroke-dasharray="2 6"/>
+          <circle cx="240" cy="240" r="140"/>
+          <circle cx="240" cy="240" r="100" stroke-dasharray="1 4"/>
+          <circle cx="240" cy="240" r="60"/>
+          <g>
+            <g id="r-petal"><path d="M240 30 Q252 130 240 230 Q228 130 240 30 Z"/></g>
+            <use href="#r-petal" transform="rotate(30 240 240)"/>
+            <use href="#r-petal" transform="rotate(60 240 240)"/>
+            <use href="#r-petal" transform="rotate(90 240 240)"/>
+            <use href="#r-petal" transform="rotate(120 240 240)"/>
+            <use href="#r-petal" transform="rotate(150 240 240)"/>
+            <use href="#r-petal" transform="rotate(180 240 240)"/>
+            <use href="#r-petal" transform="rotate(210 240 240)"/>
+            <use href="#r-petal" transform="rotate(240 240 240)"/>
+            <use href="#r-petal" transform="rotate(270 240 240)"/>
+            <use href="#r-petal" transform="rotate(300 240 240)"/>
+            <use href="#r-petal" transform="rotate(330 240 240)"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="zen-crumb">
+        <span>Index</span><span class="sep">/</span>
+        <span>Volume 03</span><span class="sep">/</span>
+        <span class="here">问穹鼎</span>
+      </div>
+      <h1>问 穹 鼎<span class="h1-seal">问</span></h1>
+      <div class="en-title"><em>Research · Discoveries &amp; Findings</em></div>
+      <div class="rule"></div>
+    </header>
+
+    <main class="content">
+
+      <!-- ── featured: DB architecture ── -->
+      <article class="item featured zen-card zen-corners zen-rise d2">
+        <span class="c-bl"></span><span class="c-br"></span>
+
+        <div class="featured-head">
+          <span class="idx">壹</span>
+          <div>
+            <div class="ti">本站数据架构 · 方案对比</div>
+            <div class="date">2026 · 05 · 18</div>
+          </div>
+          <span class="badge">Featured</span>
+        </div>
+
+        <div class="desc">
+          目前网站的内容（作品、研究、随笔、相册）都写死在 HTML 文件里。要让内容可增删改、跨页面复用、未来支持搜索/分页，需要把数据层抽出来。下面对比四个由轻到重的方案，每个都给出适用场景与成本。
+        </div>
+
+        <div class="plan-grid">
+
+          <div class="plan">
+            <div class="plan-head">
+              <div class="plan-name">方案 A · 静态 JSON</div>
+              <div class="plan-level">Easiest</div>
+            </div>
+            <div class="plan-line"><strong>怎么做：</strong>把所有内容写进 <code>data/articles.json</code>，前端用 <code>fetch()</code> 读取并渲染。部署到 GitHub Pages / Vercel / Netlify。</div>
+            <div class="plan-pros">✓ 零成本零运维 · 改内容就是改 JSON 推一下 Git · 速度极快 · 适合个人小站</div>
+            <div class="plan-cons">✗ 需要会用 Git · 没有后台编辑器 · 不适合多人协作</div>
+          </div>
+
+          <div class="plan">
+            <div class="plan-head">
+              <div class="plan-name">方案 B · Notion 作 CMS</div>
+              <div class="plan-level">Friendly</div>
+            </div>
+            <div class="plan-line"><strong>怎么做：</strong>把内容写在 Notion 数据库里，通过官方 API（或 notion-sdk-js）拉取。可加缓存层降低延迟。</div>
+            <div class="plan-pros">✓ 编辑体验最好 · 富文本所见即所得 · 手机也能改 · 免费</div>
+            <div class="plan-cons">✗ 需要 Notion token · API 限速 3 次/秒 · 首屏慢，建议加 ISR/缓存</div>
+          </div>
+
+          <div class="plan">
+            <div class="plan-head">
+              <div class="plan-name">方案 C · Supabase</div>
+              <div class="plan-level">Recommended</div>
+            </div>
+            <div class="plan-line"><strong>怎么做：</strong>用 Supabase 托管的 Postgres，自动生成 REST/GraphQL 接口。带认证、图片存储、可视化后台。</div>
+            <div class="plan-pros">✓ 真正的关系数据库 · 免费层够个人站 · 有管理后台 · 支持评论、点赞等功能</div>
+            <div class="plan-cons">✗ 要学一点 SQL · 配置 RLS 安全策略需谨慎</div>
+          </div>
+
+          <div class="plan">
+            <div class="plan-head">
+              <div class="plan-name">方案 D · 自建后端</div>
+              <div class="plan-level">Full Control</div>
+            </div>
+            <div class="plan-line"><strong>怎么做：</strong>Node.js (Express / Hono) + MongoDB 或 Postgres，部署在 Railway / Render / Fly.io。</div>
+            <div class="plan-pros">✓ 完全自由，想加什么逻辑都行 · 适合长期演化的项目</div>
+            <div class="plan-cons">✗ 维护成本最高 · 数据库账户、备份、监控都要自己管 · 起步最慢</div>
+          </div>
+
+        </div>
+
+        <div class="recommendation">
+          <strong>建议路径：</strong>先用 <strong>方案 A</strong>（静态 JSON）把现有内容迁出来 — 半天工作量，立即解决「改内容要改 HTML」的痛点。等内容量超过 30 篇、或需要评论/搜索功能时，再无痛切到 <strong>方案 C</strong>（Supabase）— 因为 JSON 与 Supabase 的字段结构可以一一对应，迁移只是改数据源。
+        </div>
+
+        <div class="tags" style="margin-top:20px;">
+          <span class="tag">Architecture</span>
+          <span class="tag">JSON</span>
+          <span class="tag">Notion API</span>
+          <span class="tag">Supabase</span>
+          <span class="tag">Self-Hosted</span>
+        </div>
+      </article>
+
+      <!-- ── other research ── -->
+      <article class="item zen-card zen-corners">
+        <span class="c-bl"></span><span class="c-br"></span>
+        <div class="idx">一</div>
         <div>
-          <div class="research-title">本站数据架构 · 方案对比</div>
-          <div class="research-date">2026年5月18日</div>
-        </div>
-        <span class="tag-featured">Featured</span>
-      </div>
-
-      <div class="research-desc" style="margin-top:18px;">
-        目前网站的内容（作品、研究、随笔、相册）都写死在 HTML 文件里。要让内容可增删改、跨页面复用、未来支持搜索/分页，需要把数据层抽出来。下面对比四个由轻到重的方案，每个都给出适用场景与成本。
-      </div>
-
-      <div class="plan-grid">
-
-        <div class="plan">
-          <div class="plan-head">
-            <div class="plan-name">方案 A · 静态 JSON</div>
-            <div class="plan-level">Easiest</div>
+          <div class="ti">数字生态系统中的模式</div>
+          <div class="date">2026 · 03 · 15</div>
+          <div class="desc">对互联数字系统中涌现行为模式的调查。探索复杂性如何从简单交互与规则中产生 — 万法因缘生。</div>
+          <div class="tags">
+            <span class="tag">Systems Theory</span>
+            <span class="tag">Complexity</span>
+            <span class="tag">Digital Networks</span>
           </div>
-          <div class="plan-line"><strong>怎么做：</strong>把所有内容写进 <code>data/articles.json</code>，前端用 <code>fetch()</code> 读取并渲染。部署到 GitHub Pages / Vercel / Netlify。</div>
-          <div class="plan-pros">✓ 零成本零运维 · 改内容就是改 JSON 推一下 Git · 速度极快 · 适合个人小站</div>
-          <div class="plan-cons">✗ 需要会用 Git · 没有后台编辑器 · 不适合多人协作</div>
         </div>
+      </article>
 
-        <div class="plan">
-          <div class="plan-head">
-            <div class="plan-name">方案 B · Notion 作 CMS</div>
-            <div class="plan-level">Friendly</div>
+      <article class="item zen-card zen-corners">
+        <span class="c-bl"></span><span class="c-br"></span>
+        <div class="idx">二</div>
+        <div>
+          <div class="ti">天然材料的发光性</div>
+          <div class="date">2026 · 02 · 28</div>
+          <div class="desc">研究生物发光特性及其在可持续技术中的潜在应用。深入探索自然界自身的发光机制 — 暗中有光。</div>
+          <div class="tags">
+            <span class="tag">Bioluminescence</span>
+            <span class="tag">Materials Science</span>
+            <span class="tag">Sustainability</span>
           </div>
-          <div class="plan-line"><strong>怎么做：</strong>把内容写在 Notion 数据库里，通过官方 API（或 notion-sdk-js）拉取。可加缓存层降低延迟。</div>
-          <div class="plan-pros">✓ 编辑体验最好 · 富文本所见即所得 · 手机也能改 · 免费</div>
-          <div class="plan-cons">✗ 需要 Notion token · API 限速 3 次/秒 · 首屏慢，建议加 ISR/缓存</div>
         </div>
+      </article>
 
-        <div class="plan">
-          <div class="plan-head">
-            <div class="plan-name">方案 C · Supabase</div>
-            <div class="plan-level">Recommended</div>
+      <article class="item zen-card zen-corners">
+        <span class="c-bl"></span><span class="c-br"></span>
+        <div class="idx">三</div>
+        <div>
+          <div class="ti">认知负荷与信息设计</div>
+          <div class="date">2026 · 02 · 10</div>
+          <div class="desc">研究视觉层次结构和信息架构如何影响认知处理过程。信息留存最优设计模式的研究发现 — 少则得，多则惑。</div>
+          <div class="tags">
+            <span class="tag">Cognitive Science</span>
+            <span class="tag">UX Research</span>
+            <span class="tag">Design Theory</span>
           </div>
-          <div class="plan-line"><strong>怎么做：</strong>用 Supabase 托管的 Postgres，自动生成 REST/GraphQL 接口。带认证、图片存储、可视化后台。</div>
-          <div class="plan-pros">✓ 真正的关系数据库 · 免费层够个人站 · 有管理后台 · 支持评论、点赞等功能</div>
-          <div class="plan-cons">✗ 要学一点 SQL · 配置 RLS 安全策略需谨慎</div>
         </div>
+      </article>
 
-        <div class="plan">
-          <div class="plan-head">
-            <div class="plan-name">方案 D · 自建后端</div>
-            <div class="plan-level">Full Control</div>
+      <article class="item zen-card zen-corners">
+        <span class="c-bl"></span><span class="c-br"></span>
+        <div class="idx">四</div>
+        <div>
+          <div class="ti">数字艺术的时间维度</div>
+          <div class="date">2026 · 01 · 20</div>
+          <div class="desc">探索时间与运动如何在数字艺术作品中与感知相互作用。交互媒体中时间构图理解框架 — 一刹那即永恒。</div>
+          <div class="tags">
+            <span class="tag">Digital Art</span>
+            <span class="tag">Animation</span>
+            <span class="tag">Perception</span>
           </div>
-          <div class="plan-line"><strong>怎么做：</strong>Node.js (Express / Hono) + MongoDB 或 Postgres，部署在 Railway / Render / Fly.io。</div>
-          <div class="plan-pros">✓ 完全自由，想加什么逻辑都行 · 适合长期演化的项目</div>
-          <div class="plan-cons">✗ 维护成本最高 · 数据库账户、备份、监控都要自己管 · 起步最慢</div>
         </div>
+      </article>
 
-      </div>
-
-      <div class="recommendation">
-        <strong>建议路径：</strong>先用 <strong>方案 A</strong>（静态 JSON）把现有内容迁出来 — 半天工作量，立即解决「改内容要改 HTML」的痛点。等内容量超过 30 篇、或需要评论/搜索功能时，再无痛切到 <strong>方案 C</strong>（Supabase）— 因为 JSON 与 Supabase 的字段结构可以一一对应，迁移只是改数据源。
-      </div>
-
-      <div class="research-tags" style="margin-top:18px;">
-        <span class="tag">Architecture</span>
-        <span class="tag">JSON</span>
-        <span class="tag">Notion API</span>
-        <span class="tag">Supabase</span>
-        <span class="tag">Self-Hosted</span>
-      </div>
-    </div>
-
-    <div class="research-item">
-      <div class="research-index">一</div>
-      <div>
-        <div class="research-title">数字生态系统中的模式</div>
-        <div class="research-date">2026年3月15日</div>
-        <div class="research-desc">对互联数字系统中涌现行为模式的调查。探索复杂性如何从简单交互与规则中产生。</div>
-        <div class="research-tags">
-          <span class="tag">Systems Theory</span>
-          <span class="tag">Complexity</span>
-          <span class="tag">Digital Networks</span>
+      <article class="item zen-card zen-corners">
+        <span class="c-bl"></span><span class="c-br"></span>
+        <div class="idx">五</div>
+        <div>
+          <div class="ti">信息架构中的色彩理论</div>
+          <div class="date">2025 · 12 · 05</div>
+          <div class="desc">关于色彩选择如何影响用户在界面设计中导航与决策的综合研究。色彩联想的定量发现 — 色即是色。</div>
+          <div class="tags">
+            <span class="tag">Color Science</span>
+            <span class="tag">UX/UI</span>
+            <span class="tag">Psychology</span>
+          </div>
         </div>
-      </div>
-    </div>
+      </article>
 
-    <div class="research-item">
-      <div class="research-index">二</div>
-      <div>
-        <div class="research-title">天然材料的发光性</div>
-        <div class="research-date">2026年2月28日</div>
-        <div class="research-desc">研究生物发光特性及其在可持续技术中的潜在应用。深入探索自然界自身的发光机制。</div>
-        <div class="research-tags">
-          <span class="tag">Bioluminescence</span>
-          <span class="tag">Materials Science</span>
-          <span class="tag">Sustainability</span>
-        </div>
-      </div>
-    </div>
+    </main>
 
-    <div class="research-item">
-      <div class="research-index">三</div>
-      <div>
-        <div class="research-title">认知负荷与信息设计</div>
-        <div class="research-date">2026年2月10日</div>
-        <div class="research-desc">研究视觉层次结构和信息架构如何影响认知处理过程。信息留存最优设计模式的研究发现。</div>
-        <div class="research-tags">
-          <span class="tag">Cognitive Science</span>
-          <span class="tag">UX Research</span>
-          <span class="tag">Design Theory</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="research-item">
-      <div class="research-index">四</div>
-      <div>
-        <div class="research-title">数字艺术的时间维度</div>
-        <div class="research-date">2026年1月20日</div>
-        <div class="research-desc">探索时间与运动如何在数字艺术作品中与感知相互作用。交互媒体中时间构图理解框架。</div>
-        <div class="research-tags">
-          <span class="tag">Digital Art</span>
-          <span class="tag">Animation</span>
-          <span class="tag">Perception</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="research-item">
-      <div class="research-index">五</div>
-      <div>
-        <div class="research-title">信息架构中的色彩理论</div>
-        <div class="research-date">2025年12月5日</div>
-        <div class="research-desc">关于色彩选择如何影响用户在界面设计中导航与决策的综合研究。色彩联想的定量发现。</div>
-        <div class="research-tags">
-          <span class="tag">Color Science</span>
-          <span class="tag">UX/UI</span>
-          <span class="tag">Psychology</span>
-        </div>
-      </div>
-    </div>
+    <footer class="zen-foot">
+      <span class="mono ghost">© MMXXVI · Joey&rsquo;s Joy</span>
+      <span class="mono ghost">卷三 · 问穹鼎 · Research</span>
+      <span class="mono ghost">Theme · Linen White</span>
+    </footer>
 
   </div>
 
-  <footer>© 2026 Joey's Joy</footer>
-
+  <script src="../assets/zen-fx.js"></script>
   <script>
-    (function(){
-      const canvas = document.getElementById('rain-canvas');
-      const ctx = canvas.getContext('2d');
-      let W, H;
-      function resize(){ W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
-      resize(); window.addEventListener('resize', resize);
-      const WIND = 0.17, ripples = [];
-      function rand(a,b){ return a + Math.random()*(b-a); }
-      function spawn(init){
-        const t = Math.random();
-        const layer = t<0.62?0:t<0.88?1:2;
-        const cfg=[[0.0050,0.55,0.038,0.13],[0.0090,1.40,0.082,0.35],[0.0155,2.80,0.138,0.62]][layer];
-        return{ x:Math.random(), y:init?Math.random():rand(-0.09,0),
-          vy:cfg[0]*rand(0.88,1.12), w:cfg[1]*rand(0.85,1.15),
-          len:cfg[2]*rand(0.80,1.30), op:cfg[3]*rand(0.80,1.20), layer };
-      }
-      const drops = Array.from({length:240},()=>spawn(true));
-      drops.sort((a,b)=>a.layer-b.layer);
-      function frame(){
-        ctx.clearRect(0,0,W,H);
-        for(let i=ripples.length-1;i>=0;i--){
-          const r=ripples[i];
-          ctx.beginPath(); ctx.ellipse(r.x,r.y,r.rx,r.rx*0.27,0,0,Math.PI*2);
-          ctx.strokeStyle=`rgba(155,210,255,${r.op})`; ctx.lineWidth=0.8; ctx.stroke();
-          r.rx+=2.6; r.op-=0.05; if(r.op<=0) ripples.splice(i,1);
-        }
-        drops.forEach((d,i)=>{
-          const x=d.x*W, y=d.y*H, tl=d.len*H, tx=x+WIND*tl, ty=y-tl;
-          const g=ctx.createLinearGradient(tx,ty,x,y);
-          g.addColorStop(0,'rgba(130,195,245,0)');
-          g.addColorStop(0.52,`rgba(172,220,255,${d.op*0.42})`);
-          g.addColorStop(1,`rgba(218,243,255,${d.op})`);
-          ctx.beginPath(); ctx.moveTo(tx,ty); ctx.lineTo(x,y);
-          ctx.strokeStyle=g; ctx.lineWidth=d.w; ctx.lineCap='round'; ctx.stroke();
-          if(d.layer>=1){
-            const gr=ctx.createRadialGradient(x,y,0,x,y,d.w*2.7);
-            gr.addColorStop(0,`rgba(198,234,255,${d.op*0.55})`);
-            gr.addColorStop(0.55,`rgba(172,216,255,${d.op*0.18})`);
-            gr.addColorStop(1,'rgba(140,196,246,0)');
-            ctx.beginPath(); ctx.arc(x,y,d.w*2.7,0,Math.PI*2); ctx.fillStyle=gr; ctx.fill();
-            ctx.beginPath(); ctx.arc(x,y,d.w*0.90,0,Math.PI*2);
-            ctx.fillStyle=`rgba(226,246,255,${d.op*0.80})`; ctx.fill();
-            ctx.beginPath(); ctx.arc(x-d.w*0.28,y-d.w*0.30,d.w*0.36,0,Math.PI*2);
-            ctx.fillStyle=`rgba(255,255,255,${d.op})`; ctx.fill();
-          }
-          d.y+=d.vy; d.x-=WIND*d.vy*0.55;
-          if(d.y>1.04){
-            if(d.layer===2&&Math.random()>0.37) ripples.push({x:d.x*W,y:H-1,rx:d.w*2.0,op:d.op*0.54});
-            drops[i]=spawn(false);
-          }
-        });
-        requestAnimationFrame(frame);
-      }
-      frame();
-    })();
-  </script>
-
-  <script>
-    /* card-click wiring */
-    document.querySelectorAll('.research-item').forEach(c => {
-      c.style.cursor = 'pointer';
+    document.querySelectorAll('.item').forEach(c => {
       c.addEventListener('click', e => {
-        if (e.target.closest('a')) return; // let inner <a> through
-        const t = c.querySelector('.research-title')?.textContent.trim() || '';
-        const d = c.querySelector('.research-date')?.textContent.trim() || '';
+        if (e.target.closest('a')) return;
+        const t = c.querySelector('.ti')?.textContent.trim() || '';
+        const d = c.querySelector('.date')?.textContent.trim() || '';
         location.href = 'article.html?from=research'
           + '&title=' + encodeURIComponent(t)
           + '&date='  + encodeURIComponent(d);

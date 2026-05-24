@@ -4,256 +4,251 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>众生苦 · Joey's Joy</title>
-  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Noto+Serif+SC:wght@300;400;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/zen.css">
   <style>
-    :root {
-      --glass-fill:   rgba(255,255,255,0.055);
-      --glass-border: rgba(255,255,255,0.50);
-      --warm-amber:   #c8a55a;
-      --cool-mist:    #7a93a8;
-      --jade:         #6b9e8d;
-      --text-primary: #1a2540;
-      --text-muted:   #475370;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Noto Serif SC', serif;
-      background:
-        radial-gradient(ellipse 75% 60% at 18% 15%, rgba(178,200,225,.85) 0%, transparent 55%),
-        radial-gradient(ellipse 70% 60% at 85% 85%, rgba(145,175,205,.75) 0%, transparent 55%),
-        radial-gradient(ellipse 55% 55% at 72% 28%, rgba(195,210,230,.55) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 50% at 28% 78%, rgba(155,180,210,.55) 0%, transparent 60%),
-        linear-gradient(160deg, #6a7d96 0%, #4f637c 50%, #5a6f88 100%);
-      color: var(--text-primary); min-height: 100vh;
-    }
-
-    #rain-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-    .light-bloom { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 1; }
-    .light-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(255,220,150,0.18) 0%, transparent 70%); top: -180px; left: -100px; }
-    .light-2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(180,220,200,0.16) 0%, transparent 70%); bottom: -80px; right: 60px; }
-
-    header {
+    .content {
       position: relative; z-index: 10;
-      padding: 52px 56px 40px;
-      border-bottom: 1px solid var(--glass-border);
-      background: rgba(255,255,255,.28);
-      backdrop-filter: blur(36px) saturate(1.4);
-      box-shadow: 0 1px 0 rgba(255,255,255,.07), 0 8px 40px rgba(0,0,0,.5);
+      max-width: 780px; margin: 0 auto;
+      padding: 24px 56px 80px;
     }
-    .back-btn {
-      display: inline-flex; align-items: center; gap: 12px;
-      color: var(--text-primary); text-decoration: none;
-      font-family: 'Ma Shan Zheng', cursive;
-      font-size: 1.6rem; letter-spacing: 3px;
-      padding: 12px 28px;
-      border: 1px solid rgba(200,165,90,0.35);
-      border-radius: 1px;
-      background: rgba(200,165,90,0.07);
-      backdrop-filter: blur(12px);
-      transition: all 0.3s ease;
-      position: absolute; top: 28px; left: 56px;
+
+    /* ── sutra ghost — heart sutra characters drifting in column ── */
+    .sutra-ghost {
+      position: fixed; inset: 0; z-index: 1;
+      pointer-events: none;
+      display: flex; justify-content: flex-end;
+      padding: 80px 56px;
+      overflow: hidden;
     }
-    .back-btn:hover { color: var(--warm-amber); background: rgba(200,165,90,0.14); border-color: rgba(200,165,90,0.65); transform: translateX(-4px); }
+    .sutra-ghost .col {
+      writing-mode: vertical-rl;
+      font-family: var(--han);
+      font-size: 22px;
+      letter-spacing: 0.55em;
+      line-height: 2.2;
+      color: var(--ink);
+      opacity: 0.07;
+      white-space: pre;
+      user-select: none;
+      animation: sutra-drift 80s linear infinite;
+    }
+    @keyframes sutra-drift {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-30%); }
+    }
 
-    h1 { font-family: 'Ma Shan Zheng', cursive; font-size: clamp(4rem, 9vw, 7.5rem); font-weight: 400; letter-spacing: 8px;
-        background: linear-gradient(135deg, #1a2540 0%, #3b2a5e 50%, #1f3a5c 100%);
-        -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-        filter: drop-shadow(0 2px 1px rgba(255,255,255,.5)) drop-shadow(0 4px 12px rgba(20,30,55,.3)); }
-    .section-sub { margin-top: 14px; font-size: 1.2rem; letter-spacing: 4px; color: #3b4a6a; text-shadow: 0 1px 0 rgba(255,255,255,.4); text-transform: uppercase; }
-    .header-rule { width: 48px; height: 1px; background: linear-gradient(90deg, var(--warm-amber), transparent); margin-top: 16px; opacity: 0.65; }
-
-    .content { position: relative; z-index: 10; max-width: 740px; margin: 0 auto; padding: 64px 56px 80px; }
-
+    /* ── essay cards ─────────────────────────────────── */
     .essay {
-      padding: 44px 40px;
-      margin-bottom: 12px;
-      border: 1px solid var(--glass-border);
-      border-radius: 1px;
-      background: rgba(255,255,255,.22);
-      backdrop-filter: blur(22px) saturate(1.3);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 8px 32px rgba(20,30,55,.35), 0 1px 2px rgba(20,30,55,.20);
+      padding: 42px 44px;
+      margin-bottom: 14px;
       cursor: pointer;
-      transition: background 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
     }
-    .essay:last-child { margin-bottom: 0; }
-    .essay:hover { background: rgba(255,255,255,.38); box-shadow: inset 0 1px 0 rgba(255,255,255,.42), 0 6px 28px rgba(0,0,0,.5); }
+    .essay::before {
+      /* a faint cinnabar mark at the left edge */
+      content: '';
+      position: absolute;
+      left: 18px; top: 50%;
+      width: 3px; height: 0;
+      background: var(--cinnabar);
+      transition: height .5s cubic-bezier(.22,1,.36,1);
+      transform: translateY(-50%);
+    }
+    .essay:hover::before { height: 40%; }
 
-    .essay-title {
-      font-family: 'Ma Shan Zheng', cursive;
-      font-size: 3.4rem; font-weight: 400;
-      letter-spacing: 4px;
-      color: var(--text-primary);
+    .essay .ti {
+      font-family: var(--brush);
+      font-size: 3.0rem; font-weight: 400;
+      letter-spacing: 0.10em;
+      color: var(--ink);
       margin-bottom: 18px;
-      transition: color 0.3s ease;
-      line-height: 1.3;
+      line-height: 1.25;
+      transition: color .35s;
     }
-    .essay:hover .essay-title { color: var(--warm-amber); }
+    .essay:hover .ti { color: var(--copper); }
 
     .essay-meta {
-      display: flex; gap: 24px;
-      font-size: 1.0rem; letter-spacing: 2px;
-      color: var(--text-muted);
-      margin-bottom: 24px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--glass-border);
+      display: flex; gap: 28px;
+      font-family: var(--mono);
+      font-size: 0.74rem; letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      margin-bottom: 22px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--hair);
+    }
+    .essay-meta .stamp {
+      color: var(--cinnabar);
+      font-family: var(--brush);
+      font-size: 0.95rem;
+      letter-spacing: 0.12em;
+      text-transform: none;
     }
 
     .essay-body {
-      font-size: 1.2rem; line-height: 2.1;
-      color: var(--text-muted);
+      font-family: var(--han);
+      font-size: 1.1rem; line-height: 2.0;
+      color: var(--ink-soft);
       text-wrap: pretty;
     }
     .essay-body p + p { margin-top: 18px; }
+    .essay-body p::first-letter {
+      font-family: var(--brush);
+      font-size: 1.6em;
+      color: var(--copper);
+      padding-right: 4px;
+    }
+    .essay-body p + p::first-letter {
+      font-family: inherit; font-size: inherit; color: inherit; padding: 0;
+    }
 
     .read-more {
-      display: inline-block; margin-top: 22px;
-      font-size: 0.95rem; letter-spacing: 2px;
-      color: var(--cool-mist);
-      text-decoration: none;
-      border-bottom: 1px solid rgba(122,147,168,0.3);
+      display: inline-flex; align-items: center; gap: 8px;
+      margin-top: 24px;
+      font-family: var(--mono);
+      font-size: 0.78rem; letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--copper);
       padding-bottom: 2px;
-      transition: all 0.3s ease;
+      border-bottom: 1px solid color-mix(in srgb, var(--copper) 40%, transparent);
+      transition: all .3s;
     }
-    .read-more:hover { color: var(--warm-amber); border-color: rgba(200,165,90,0.4); }
+    .read-more:hover { color: var(--cinnabar); border-color: var(--cinnabar); }
+    .read-more::after {
+      content: '→';
+      transition: transform .3s;
+    }
+    .essay:hover .read-more::after { transform: translateX(4px); }
 
-    footer { position: relative; z-index: 10; text-align: center; padding: 36px; font-size: 0.9rem; letter-spacing: 2px; color: var(--text-muted); border-top: 1px solid var(--glass-border); background: rgba(255,255,255,.25); backdrop-filter: blur(20px); }
+    @media (max-width: 640px) {
+      .content { padding: 22px 22px 60px; }
+      .essay { padding: 28px 22px; }
+      .essay .ti { font-size: 2.2rem; }
+    }
   </style>
 </head>
-<body>
-  <canvas id="rain-canvas"></canvas>
-  <div class="light-bloom light-1"></div>
-  <div class="light-bloom light-2"></div>
+<body data-theme="dark" data-fx="incense">
 
-  <header>
-    <a href="../index.html" class="back-btn">← 返回主页</a>
-    <h1>众生苦</h1>
-    <p class="section-sub">Essays, Reflections &amp; Personal Musings</p>
-    <div class="header-rule"></div>
-  </header>
+  <div class="zen-field"></div>
+  <div class="zen-grain"></div>
+  <div class="zen-vignette"></div>
 
-  <div class="content">
+  <!-- Heart Sutra ghost text drifting on the right -->
+  <div class="sutra-ghost" aria-hidden="true">
+    <div class="col">观自在菩萨 行深般若波罗蜜多时 照见五蕴皆空 度一切苦厄 舍利子 色不异空 空不异色 色即是空 空即是色 受想行识 亦复如是 舍利子 是诸法空相 不生不灭 不垢不净 不增不减 是故空中无色 无受想行识 无眼耳鼻舌身意 无色声香味触法 无眼界 乃至无意识界 无无明 亦无无明尽 乃至无老死 亦无老死尽 无苦集灭道 无智亦无得</div>
+  </div>
 
-    <div class="essay">
-      <div class="essay-title">美之重</div>
-      <div class="essay-meta">
-        <span>2026年3月10日</span>
-        <span>8分钟阅读</span>
-      </div>
-      <div class="essay-body">
-        <p>在一个痴迷于完美的世界里，我们常常忘记——美不在于缺陷的消失，而在于对缺陷的接纳。每一道疤痕都在诉说故事，每一处不完美都标记着成长的瞬间。</p>
-        <p>当我们创作时，我们将灵魂倾注其中。挣扎本身也是美的一部分——那些深夜，那些失败的尝试，那些自我怀疑的时刻。正是这些线索，将意义编织进存在之中。</p>
-      </div>
-      <a href="#" class="read-more">续读 →</a>
-    </div>
+  <div class="zen-stage">
 
-    <div class="essay">
-      <div class="essay-title">于暗处觅光</div>
-      <div class="essay-meta">
-        <span>2026年2月28日</span>
-        <span>6分钟阅读</span>
+    <header class="zen-topbar zen-rise">
+      <div class="left">
+        <a href="../index.html" class="zen-back">
+          <span class="arrow"></span>
+          <span>返 · Return</span>
+        </a>
+        <span class="zen-brand">
+          <span class="seal">乔</span>
+          <span class="mono dim">Joey&rsquo;s Joy</span>
+        </span>
       </div>
-      <div class="essay-body">
-        <p>黑暗并非光明的缺席，而是令光明得以显现的背景。没有阴影，我们便无从珍视照耀；没有寂静，音乐便将失去力量。</p>
-        <p>生命在这两极之间摆荡。那些艰难的时刻，那些迷失与渺小的感受，并非失败，而是必经的通道——它加深了我们的理解，也坚韧了我们的精神。</p>
+      <div class="right">
+        <span class="mono dim">卷 · 04 / 05</span>
+        <span class="zen-live"><span class="pulse"></span><span class="mono small ghost">在线 · 26.05.24</span></span>
       </div>
-      <a href="#" class="read-more">续读 →</a>
-    </div>
+    </header>
 
-    <div class="essay">
-      <div class="essay-title">等待的艺术</div>
-      <div class="essay-meta">
-        <span>2026年2月15日</span>
-        <span>7分钟阅读</span>
+    <header class="zen-head zen-rise d1">
+      <div class="zen-crumb">
+        <span>Index</span><span class="sep">/</span>
+        <span>Volume 04</span><span class="sep">/</span>
+        <span class="here">众生苦</span>
       </div>
-      <div class="essay-body">
-        <p>我们生活在一个追求即时的时代。一切都必须立刻、瞬间、完美地发生。然而生命中最馈赠厚重的礼物，往往需要耐心——一粒种子需要时间长成大树，一个梦想需要岁月才能显形。</p>
-        <p>等待教我们放手——不是放弃希望，而是放下执念。它教我们信任过程，相信那些尚不可见的，在当下找到安宁，同时对自己的愿景保持忠诚。</p>
-      </div>
-      <a href="#" class="read-more">续读 →</a>
-    </div>
+      <h1>众 生 苦<span class="h1-seal">念</span></h1>
+      <div class="en-title"><em>Essays, Reflections &amp; Quiet Musings</em></div>
+      <div class="rule"></div>
+    </header>
 
-    <div class="essay">
-      <div class="essay-title">放手的悖论</div>
-      <div class="essay-meta">
-        <span>2026年1月30日</span>
-        <span>9分钟阅读</span>
-      </div>
-      <div class="essay-body">
-        <p>握得越紧，越容易失去。自由地爱，意味着冒险失去，然而这是爱变得真实的唯一方式。这个悖论，坐落在所有人类经验的核心。</p>
-        <p>创作要求我们放手——放下完美主义，放下期待，放下对结果的控制欲。唯有松开手，我们才能找到自由；唯有在自由中，我们才能真正创造。</p>
-      </div>
-      <a href="#" class="read-more">续读 →</a>
-    </div>
+    <main class="content">
+
+      <article class="essay zen-card zen-corners zen-rise d2">
+        <span class="c-bl"></span><span class="c-br"></span>
+        <div class="ti">美之重</div>
+        <div class="essay-meta">
+          <span>2026 · 03 · 10</span>
+          <span>8 分钟阅读</span>
+          <span class="stamp">念 · 01</span>
+        </div>
+        <div class="essay-body">
+          <p>在一个痴迷于完美的世界里，我们常常忘记 — 美不在于缺陷的消失，而在于对缺陷的接纳。每一道疤痕都在诉说故事，每一处不完美都标记着成长的瞬间。</p>
+          <p>当我们创作时，我们将灵魂倾注其中。挣扎本身也是美的一部分 — 那些深夜，那些失败的尝试，那些自我怀疑的时刻。正是这些线索，将意义编织进存在之中。</p>
+        </div>
+        <a href="#" class="read-more">续 读</a>
+      </article>
+
+      <article class="essay zen-card zen-corners">
+        <span class="c-bl"></span><span class="c-br"></span>
+        <div class="ti">于暗处觅光</div>
+        <div class="essay-meta">
+          <span>2026 · 02 · 28</span>
+          <span>6 分钟阅读</span>
+          <span class="stamp">念 · 02</span>
+        </div>
+        <div class="essay-body">
+          <p>黑暗并非光明的缺席，而是令光明得以显现的背景。没有阴影，我们便无从珍视照耀；没有寂静，音乐便将失去力量。</p>
+          <p>生命在这两极之间摆荡。那些艰难的时刻，那些迷失与渺小的感受，并非失败，而是必经的通道 — 它加深了我们的理解，也坚韧了我们的精神。</p>
+        </div>
+        <a href="#" class="read-more">续 读</a>
+      </article>
+
+      <article class="essay zen-card zen-corners">
+        <span class="c-bl"></span><span class="c-br"></span>
+        <div class="ti">等待的艺术</div>
+        <div class="essay-meta">
+          <span>2026 · 02 · 15</span>
+          <span>7 分钟阅读</span>
+          <span class="stamp">念 · 03</span>
+        </div>
+        <div class="essay-body">
+          <p>我们生活在一个追求即时的时代。一切都必须立刻、瞬间、完美地发生。然而生命中最馈赠厚重的礼物，往往需要耐心 — 一粒种子需要时间长成大树，一个梦想需要岁月才能显形。</p>
+          <p>等待教我们放手 — 不是放弃希望，而是放下执念。它教我们信任过程，相信那些尚不可见的，在当下找到安宁，同时对自己的愿景保持忠诚。</p>
+        </div>
+        <a href="#" class="read-more">续 读</a>
+      </article>
+
+      <article class="essay zen-card zen-corners">
+        <span class="c-bl"></span><span class="c-br"></span>
+        <div class="ti">放手的悖论</div>
+        <div class="essay-meta">
+          <span>2026 · 01 · 30</span>
+          <span>9 分钟阅读</span>
+          <span class="stamp">念 · 04</span>
+        </div>
+        <div class="essay-body">
+          <p>握得越紧，越容易失去。自由地爱，意味着冒险失去，然而这是爱变得真实的唯一方式。这个悖论，坐落在所有人类经验的核心。</p>
+          <p>创作要求我们放手 — 放下完美主义，放下期待，放下对结果的控制欲。唯有松开手，我们才能找到自由；唯有在自由中，我们才能真正创造。</p>
+        </div>
+        <a href="#" class="read-more">续 读</a>
+      </article>
+
+    </main>
+
+    <footer class="zen-foot">
+      <span class="mono ghost">© MMXXVI · Joey&rsquo;s Joy</span>
+      <span class="mono ghost">卷四 · 众生苦 · Essays</span>
+      <span class="mono ghost">Theme · Deep Wood · 心经</span>
+    </footer>
 
   </div>
 
-  <footer>© 2026 Joey's Joy</footer>
-
+  <script src="../assets/zen-fx.js"></script>
   <script>
-    (function(){
-      const canvas = document.getElementById('rain-canvas');
-      const ctx = canvas.getContext('2d');
-      let W, H;
-      function resize(){ W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
-      resize(); window.addEventListener('resize', resize);
-      const WIND = 0.17, ripples = [];
-      function rand(a,b){ return a + Math.random()*(b-a); }
-      function spawn(init){
-        const t = Math.random();
-        const layer = t<0.62?0:t<0.88?1:2;
-        const cfg=[[0.0050,0.55,0.038,0.13],[0.0090,1.40,0.082,0.35],[0.0155,2.80,0.138,0.62]][layer];
-        return{ x:Math.random(), y:init?Math.random():rand(-0.09,0),
-          vy:cfg[0]*rand(0.88,1.12), w:cfg[1]*rand(0.85,1.15),
-          len:cfg[2]*rand(0.80,1.30), op:cfg[3]*rand(0.80,1.20), layer };
-      }
-      const drops = Array.from({length:240},()=>spawn(true));
-      drops.sort((a,b)=>a.layer-b.layer);
-      function frame(){
-        ctx.clearRect(0,0,W,H);
-        for(let i=ripples.length-1;i>=0;i--){
-          const r=ripples[i];
-          ctx.beginPath(); ctx.ellipse(r.x,r.y,r.rx,r.rx*0.27,0,0,Math.PI*2);
-          ctx.strokeStyle=`rgba(155,210,255,${r.op})`; ctx.lineWidth=0.8; ctx.stroke();
-          r.rx+=2.6; r.op-=0.05; if(r.op<=0) ripples.splice(i,1);
-        }
-        drops.forEach((d,i)=>{
-          const x=d.x*W, y=d.y*H, tl=d.len*H, tx=x+WIND*tl, ty=y-tl;
-          const g=ctx.createLinearGradient(tx,ty,x,y);
-          g.addColorStop(0,'rgba(130,195,245,0)');
-          g.addColorStop(0.52,`rgba(172,220,255,${d.op*0.42})`);
-          g.addColorStop(1,`rgba(218,243,255,${d.op})`);
-          ctx.beginPath(); ctx.moveTo(tx,ty); ctx.lineTo(x,y);
-          ctx.strokeStyle=g; ctx.lineWidth=d.w; ctx.lineCap='round'; ctx.stroke();
-          if(d.layer>=1){
-            const gr=ctx.createRadialGradient(x,y,0,x,y,d.w*2.7);
-            gr.addColorStop(0,`rgba(198,234,255,${d.op*0.55})`);
-            gr.addColorStop(0.55,`rgba(172,216,255,${d.op*0.18})`);
-            gr.addColorStop(1,'rgba(140,196,246,0)');
-            ctx.beginPath(); ctx.arc(x,y,d.w*2.7,0,Math.PI*2); ctx.fillStyle=gr; ctx.fill();
-            ctx.beginPath(); ctx.arc(x,y,d.w*0.90,0,Math.PI*2);
-            ctx.fillStyle=`rgba(226,246,255,${d.op*0.80})`; ctx.fill();
-            ctx.beginPath(); ctx.arc(x-d.w*0.28,y-d.w*0.30,d.w*0.36,0,Math.PI*2);
-            ctx.fillStyle=`rgba(255,255,255,${d.op})`; ctx.fill();
-          }
-          d.y+=d.vy; d.x-=WIND*d.vy*0.55;
-          if(d.y>1.04){
-            if(d.layer===2&&Math.random()>0.37) ripples.push({x:d.x*W,y:H-1,rx:d.w*2.0,op:d.op*0.54});
-            drops[i]=spawn(false);
-          }
-        });
-        requestAnimationFrame(frame);
-      }
-      frame();
-    })();
-  </script>
-
-  <script>
-    /* card-click wiring */
     document.querySelectorAll('.essay').forEach(c => {
-      c.style.cursor = 'pointer';
       c.addEventListener('click', e => {
-        if (e.target.closest('a')) return; // let inner <a> through
-        const t = c.querySelector('.essay-title')?.textContent.trim() || '';
+        if (e.target.closest('a')) return;
+        const t = c.querySelector('.ti')?.textContent.trim() || '';
         const d = c.querySelector('.essay-meta span:first-child')?.textContent.trim() || '';
         location.href = 'article.html?from=essays'
           + '&title=' + encodeURIComponent(t)
