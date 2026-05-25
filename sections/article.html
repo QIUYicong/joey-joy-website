@@ -102,6 +102,27 @@
       background: color-mix(in srgb, var(--ink) 8%, transparent);
       padding: 1px 6px; border-radius: 2px;
     }
+    /* poem rendering — preserve line breaks & verse rhythm */
+    .poem-body {
+      white-space: pre-line;
+      font-family: var(--han);
+      font-size: 1.25rem; line-height: 2.15;
+      color: var(--ink);
+      text-align: left;
+    }
+    .poem-tags {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      margin-top: 44px; padding-top: 26px;
+      border-top: 1px solid var(--hair);
+    }
+    .poem-tags span {
+      font-family: var(--mono);
+      font-size: 0.7rem; letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--copper);
+      padding: 4px 12px;
+      border: 1px solid color-mix(in srgb, var(--copper) 40%, var(--hair));
+    }
 
     @media (max-width: 700px) {
       article.reader { padding: 36px 22px 80px; }
@@ -188,10 +209,43 @@
     document.getElementById('crumb').textContent      = `${meta.zh} · ${meta.en}`;
     document.getElementById('badge').textContent      = `${meta.zh} · Vol. ${meta.vol}`;
     document.getElementById('badge-seal').textContent = meta.seal;
-    document.getElementById('title').textContent      = p.get('title') || '未命名文章';
-    document.getElementById('date').textContent       = p.get('date')  || '日期待定';
     document.getElementById('foot-vol').textContent   = `卷 ${meta.vol} · ${meta.zh} · Article`;
-    document.title = `${p.get('title') || '文章'} · Joey's Joy`;
+
+    const esc = s => (s || '').replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+    const id = p.get('id');
+
+    function setStatic(title, date) {
+      document.getElementById('title').textContent = title || '未命名文章';
+      document.getElementById('date').textContent  = date  || '日期待定';
+      document.title = `${title || '文章'} · Joey's Joy`;
+    }
+
+    if (from === 'poetry' && id) {
+      /* ─── render a single poem from poems.json ─── */
+      setStatic('展卷中…', '');
+      fetch('../assets/data/poems.json')
+        .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then(data => {
+          const poem = (data.poems || []).find(x => x.id === id);
+          if (!poem) { setStatic('未找到该诗', ''); return; }
+          setStatic(poem.title, poem.date);
+          const est = Math.max(1, Math.round((poem.body || '').replace(/\s/g, '').length / 180));
+          document.getElementById('readtime').textContent = `约 ${est} 分钟阅读`;
+          const tagsHtml = (poem.tags || []).length
+            ? `<div class="poem-tags">${poem.tags.map(t => `<span>${esc(t)}</span>`).join('')}</div>`
+            : '';
+          document.querySelector('.body').innerHTML =
+            `<div class="poem-body">${esc(poem.body)}</div>${tagsHtml}`;
+        })
+        .catch(err => {
+          setStatic('诗作加载失败', '');
+          document.querySelector('.body').innerHTML =
+            `<p>无法读取诗集数据：${esc(err.message)}</p>`;
+        });
+    } else {
+      /* legacy / placeholder route */
+      setStatic(p.get('title'), p.get('date'));
+    }
   </script>
   <script src="../assets/zen-fx.js"></script>
 </body>

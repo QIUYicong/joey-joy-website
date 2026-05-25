@@ -97,6 +97,72 @@
       opacity: 0.8;
     }
 
+    /* ── filter bar ───────────────────────────────────── */
+    .filters {
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column; gap: 16px;
+      margin-bottom: 30px;
+    }
+    .filters .row {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 10px;
+    }
+    .filters .count {
+      font-family: var(--mono);
+      font-size: 0.74rem; letter-spacing: 0.2em;
+      color: var(--ink-dim);
+      text-transform: uppercase;
+      margin-right: 8px;
+    }
+    .chip {
+      font-family: var(--han);
+      font-size: 0.82rem; letter-spacing: 0.06em;
+      color: var(--ink-soft);
+      padding: 5px 14px;
+      border: 1px solid var(--hair);
+      background: color-mix(in srgb, var(--ink) 4%, transparent);
+      cursor: pointer;
+      transition: all .2s ease;
+      white-space: nowrap;
+    }
+    .chip:hover { color: var(--copper); border-color: color-mix(in srgb, var(--copper) 50%, var(--hair)); }
+    .chip.active {
+      color: var(--paper);
+      background: var(--copper);
+      border-color: var(--copper);
+    }
+    .chip .n { font-family: var(--mono); font-size: 0.7rem; opacity: 0.6; margin-left: 6px; }
+
+    /* poem card extras */
+    .work .info { display: flex; flex-direction: column; min-height: 150px; }
+    .work .desc {
+      flex: 1;
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .work .tags {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin-top: 16px;
+    }
+    .work .tags span {
+      font-family: var(--mono);
+      font-size: 0.62rem; letter-spacing: 0.12em;
+      color: var(--ink-dim);
+      padding: 2px 8px;
+      border: 1px solid var(--hair);
+      text-transform: uppercase;
+    }
+    .work .thumb .glyph {
+      font-family: var(--brush);
+      font-size: 3.4rem; color: var(--copper); opacity: 0.85;
+      z-index: 1; user-select: none;
+    }
+    .state-msg {
+      grid-column: 1 / -1;
+      text-align: center; padding: 80px 0;
+      font-family: var(--han); color: var(--ink-dim);
+      font-size: 1.05rem; letter-spacing: 0.1em;
+    }
+
     @media (max-width: 1100px) {
       .grid { grid-template-columns: repeat(2, 1fr); }
     }
@@ -164,107 +230,18 @@
 
     <main class="content">
 
-      <div class="grid zen-rise d2">
-
-        <div class="work zen-card">
-          <div class="thumb">
-            <svg viewBox="0 0 120 90">
-              <path d="M30 75 Q50 40 60 20 Q70 40 90 75"/>
-              <path d="M20 75 Q50 50 60 30 Q70 50 100 75" opacity="0.55"/>
-              <circle cx="60" cy="18" r="3" fill="currentColor" stroke="none"/>
-            </svg>
-          </div>
-          <div class="info">
-            <span class="stamp">画</span>
-            <div class="ti">数字画布</div>
-            <div class="date">2026 · 03</div>
-            <div class="desc">色彩和谐与抽象形式的探索 — 在像素与笔触之间寻找重叠的诗意。</div>
-          </div>
+      <div class="filters zen-rise d2">
+        <div class="row">
+          <span class="count" id="count">— 首</span>
+          <span class="chip active" data-view="featured" id="view-featured">精选 · Featured</span>
+          <span class="chip" data-view="all" id="view-all">全部 · All</span>
         </div>
+        <div class="row" id="tagrow"></div>
+        <div class="row" id="yearrow"></div>
+      </div>
 
-        <div class="work zen-card">
-          <div class="thumb">
-            <svg viewBox="0 0 120 90">
-              <circle cx="60" cy="45" r="28"/>
-              <circle cx="60" cy="45" r="18" opacity="0.75"/>
-              <circle cx="60" cy="45" r="8" opacity="0.55"/>
-              <circle cx="60" cy="45" r="2.5" fill="currentColor" stroke="none"/>
-              <line x1="32" y1="45" x2="88" y2="45" opacity="0.5"/>
-              <line x1="60" y1="17" x2="60" y2="73" opacity="0.5"/>
-            </svg>
-          </div>
-          <div class="info">
-            <span class="stamp">研</span>
-            <div class="ti">渐变研究</div>
-            <div class="date">2026 · 02</div>
-            <div class="desc">色彩过渡与视觉节奏的深度探讨 — 一次缓慢的呼吸。</div>
-          </div>
-        </div>
-
-        <div class="work zen-card">
-          <div class="thumb">
-            <svg viewBox="0 0 120 90">
-              <path d="M20 70 Q40 30 60 15 Q80 30 100 70"/>
-              <path d="M35 70 Q50 45 60 32 Q70 45 85 70" opacity="0.65"/>
-              <path d="M20 70 L100 70" opacity="0.85"/>
-            </svg>
-          </div>
-          <div class="info">
-            <span class="stamp">虚</span>
-            <div class="ti">虚幻时刻</div>
-            <div class="date">2026 · 01</div>
-            <div class="desc">光影交织的本质捕捉 — 那些转瞬即逝的真实。</div>
-          </div>
-        </div>
-
-        <div class="work zen-card">
-          <div class="thumb">
-            <svg viewBox="0 0 120 90">
-              <path d="M15 60 Q35 40 60 35 Q85 40 105 60"/>
-              <path d="M15 72 Q35 52 60 47 Q85 52 105 72" opacity="0.7"/>
-              <path d="M15 45 Q35 28 60 22 Q85 28 105 45" opacity="0.5"/>
-            </svg>
-          </div>
-          <div class="info">
-            <span class="stamp">流</span>
-            <div class="ti">流动系列</div>
-            <div class="date">2025 · 12</div>
-            <div class="desc">自然运动与有机图案的灵感 — 水的姿态，云的轨迹。</div>
-          </div>
-        </div>
-
-        <div class="work zen-card">
-          <div class="thumb">
-            <svg viewBox="0 0 120 90">
-              <polygon points="60,12 100,78 20,78"/>
-              <polygon points="60,28 84,68 36,68" opacity="0.7"/>
-              <circle cx="60" cy="51" r="5" opacity="0.6"/>
-            </svg>
-          </div>
-          <div class="info">
-            <span class="stamp">形</span>
-            <div class="ti">形式表现</div>
-            <div class="date">2025 · 11</div>
-            <div class="desc">通过视觉构图探索情感共鸣 — 让几何承载情绪。</div>
-          </div>
-        </div>
-
-        <div class="work zen-card">
-          <div class="thumb">
-            <svg viewBox="0 0 120 90">
-              <rect x="22" y="14" width="76" height="62" rx="2"/>
-              <circle cx="60" cy="35" r="10" opacity="0.7"/>
-              <path d="M22 65 L40 48 L55 58 L72 42 L98 65"/>
-            </svg>
-          </div>
-          <div class="info">
-            <span class="stamp">宙</span>
-            <div class="ti">宇宙冥想</div>
-            <div class="date">2025 · 10</div>
-            <div class="desc">穿越想象中的宇宙与无限可能 — 内观即外观。</div>
-          </div>
-        </div>
-
+      <div class="grid zen-rise d3" id="grid">
+        <div class="state-msg" id="state">正在展卷……</div>
       </div>
 
     </main>
@@ -279,16 +256,107 @@
 
   <script src="../assets/zen-fx.js"></script>
   <script>
-    document.querySelectorAll('.work').forEach(c => {
-      c.addEventListener('click', e => {
-        if (e.target.closest('a')) return;
-        const t = c.querySelector('.ti')?.textContent.trim() || '';
-        const d = c.querySelector('.date')?.textContent.trim() || '';
-        location.href = 'article.html?from=poetry'
-          + '&title=' + encodeURIComponent(t)
-          + '&date='  + encodeURIComponent(d);
+    /* ─── data-driven poetry grid ─── */
+    const GLYPHS = ['吟','詩','韻','墨','風','月','山','川','雲','夢','念','寂'];
+    const esc = s => (s || '').replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+
+    const state = {
+      poems: [], view: 'featured', tag: null, year: null, meta: null,
+    };
+
+    function fmtDate(d) {                         // 2026-04-08 -> 2026 · 04
+      if (!d) return '';
+      const [y, m] = d.split('-');
+      return `${y} · ${m}`;
+    }
+
+    function filtered() {
+      let list = state.poems.slice();
+      if (state.view === 'featured') list = list.filter(p => p.featured);
+      if (state.tag)  list = list.filter(p => (p.tags || []).includes(state.tag));
+      if (state.year) list = list.filter(p => String(p.year) === String(state.year));
+      return list;
+    }
+
+    function render() {
+      const grid = document.getElementById('grid');
+      const list = filtered();
+      const total = state.poems.length;
+      const feat  = state.poems.filter(p => p.featured).length;
+      document.getElementById('count').textContent =
+        `共 ${total} 首 · 精选 ${feat} 首 · 现示 ${list.length}`;
+
+      if (!list.length) {
+        grid.innerHTML = '<div class="state-msg">此筛选下暂无诗作</div>';
+        return;
+      }
+      grid.innerHTML = list.map((p, i) => `
+        <div class="work zen-card" data-id="${p.id}">
+          <div class="thumb"><span class="glyph">${GLYPHS[i % GLYPHS.length]}</span></div>
+          <div class="info">
+            <span class="stamp">吟</span>
+            <div class="ti">${esc(p.title)}</div>
+            <div class="date">${fmtDate(p.date)}</div>
+            <div class="desc">${esc(p.excerpt)}</div>
+            <div class="tags">${(p.tags || []).slice(0, 4).map(t => `<span>${esc(t)}</span>`).join('')}</div>
+          </div>
+        </div>`).join('');
+
+      grid.querySelectorAll('.work').forEach(c => {
+        c.addEventListener('click', () => {
+          location.href = 'article.html?from=poetry&id=' + encodeURIComponent(c.dataset.id);
+        });
       });
-    });
+    }
+
+    function buildChips() {
+      // view toggle
+      document.querySelectorAll('[data-view]').forEach(el => {
+        el.addEventListener('click', () => {
+          state.view = el.dataset.view;
+          document.querySelectorAll('[data-view]').forEach(x => x.classList.toggle('active', x === el));
+          render();
+        });
+      });
+      // top tags
+      const tagrow = document.getElementById('tagrow');
+      const top = (state.meta?.tags || []).slice(0, 14);
+      tagrow.innerHTML = '<span class="count">主题</span>'
+        + top.map(t => `<span class="chip" data-tag="${esc(t.name)}">${esc(t.name)}<span class="n">${t.count}</span></span>`).join('');
+      tagrow.querySelectorAll('[data-tag]').forEach(el => {
+        el.addEventListener('click', () => {
+          const t = el.dataset.tag;
+          state.tag = state.tag === t ? null : t;
+          tagrow.querySelectorAll('[data-tag]').forEach(x => x.classList.toggle('active', x.dataset.tag === state.tag));
+          render();
+        });
+      });
+      // years
+      const yearrow = document.getElementById('yearrow');
+      const years = state.meta?.years || [];
+      yearrow.innerHTML = '<span class="count">年份</span>'
+        + years.map(y => `<span class="chip" data-year="${y}">${y}</span>`).join('');
+      yearrow.querySelectorAll('[data-year]').forEach(el => {
+        el.addEventListener('click', () => {
+          const y = el.dataset.year;
+          state.year = String(state.year) === String(y) ? null : y;
+          yearrow.querySelectorAll('[data-year]').forEach(x => x.classList.toggle('active', String(x.dataset.year) === String(state.year)));
+          render();
+        });
+      });
+    }
+
+    fetch('../assets/data/poems.json')
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(data => {
+        state.poems = data.poems || [];
+        state.meta = { tags: data.tags, years: data.meta?.years };
+        buildChips();
+        render();
+      })
+      .catch(err => {
+        document.getElementById('state').textContent = '诗集数据加载失败：' + err.message;
+      });
   </script>
 </body>
 </html>
