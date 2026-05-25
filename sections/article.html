@@ -140,21 +140,64 @@
       opacity: .95;
     }
 
-    /* 诗正文竖排：每行成一竖列，列序从左到右，整首一眼看完不滑动 */
-    body.poem-view .reader { max-width: 1480px; }
+    /* 诗正文竖排 + 分页面板：字号自适应不溢出，长诗分多页左右滑动 */
+    /* 固定栅格列宽，避免轮播内容反向撑大容器导致测量错误 */
+    body.poem-view .zen-stage { grid-template-columns: minmax(0, 1fr); }
+    body.poem-view .reader { width: 100%; max-width: 1480px; box-sizing: border-box; padding-top: 30px; padding-bottom: 48px; }
+    body.poem-view .body { width: 100%; box-sizing: border-box; padding: 34px 44px; }
+    /* 收紧诗页顶部留白，让诗面板 + 翻页控件一屏内可见 */
+    body.poem-view h1.title { font-size: clamp(2.3rem, 4.4vw, 3.4rem); margin-bottom: 14px; }
+    body.poem-view .badge { margin-bottom: 18px; }
+    body.poem-view .meta { margin-bottom: 22px; padding-bottom: 16px; }
+    .poem-stage { width: 100%; }
+    .poem-stage {
+      position: relative; overflow: hidden;
+      height: clamp(300px, 48vh, 560px);
+    }
+    .poem-track {
+      display: flex; height: 100%;
+      transition: transform .45s cubic-bezier(.22,.61,.36,1);
+      touch-action: pan-y;
+    }
+    .poem-page {
+      flex: 0 0 100%; height: 100%;
+      display: flex; align-items: flex-start; justify-content: flex-start;
+    }
     .poem-body {
       writing-mode: vertical-lr;        /* 竖排，列从左到右 */
       white-space: pre-line;            /* 保留诗行 = 每行一列 */
-      max-height: 64vh;
-      overflow-x: auto; overflow-y: hidden;
-      padding-bottom: 6px;
+      height: 100%;
       font-family: var(--han);
-      font-size: clamp(1.15rem, 1.9vw, 1.7rem);
-      line-height: 2.5;                 /* 竖排下即列间距 */
+      line-height: 2.2;                 /* 竖排下即列间距 */
       letter-spacing: 0.14em;
       color: var(--ink);
       text-align: start;
+      /* font-size 由 JS 按面板尺寸自适应注入 */
     }
+    .poem-nav {
+      display: flex; align-items: center; justify-content: center; gap: 16px;
+      margin-top: 18px; min-height: 24px;
+    }
+    .poem-nav.hidden { display: none; }
+    .pg-btn {
+      font-family: var(--han); font-size: 1.25rem; line-height: 1;
+      width: 38px; height: 38px; border-radius: 50%;
+      color: var(--copper-deep);
+      background: rgba(255,255,255,.42);
+      border: 1px solid rgba(255,255,255,.62);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      cursor: pointer; transition: all .18s;
+    }
+    .pg-btn:hover:not(:disabled) { background: var(--copper); color: #fff; }
+    .pg-btn:disabled { opacity: .35; cursor: default; }
+    .pg-dots { display: flex; gap: 8px; }
+    .pg-dots .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: color-mix(in srgb, var(--copper) 35%, transparent);
+      cursor: pointer; transition: all .18s;
+    }
+    .pg-dots .dot.on { background: var(--copper); transform: scale(1.35); }
+    .pg-count { font-family: var(--mono); font-size: .72rem; letter-spacing: .2em; color: var(--ink-dim); }
     .poem-tags {
       display: flex; flex-wrap: wrap; gap: 10px;
       margin-top: 36px; padding-top: 24px;
@@ -330,6 +373,108 @@
       document.title = `${title || '文章'} · Joey's Joy`;
     }
 
+    /* ── 长诗自适应排版 + 分页轮播：字号缩放保证不溢出，超长分多页左右滑动 ── */
+    const MAXF = 30, MINF = 13;
+    const pager = { go: null, page: 0, n: 1 };
+    let curPoem = null, resizeT = null;
+
+    function layoutPoem(stage, lines) {
+      const sw = stage.clientWidth, sh = stage.clientHeight;
+      const meas = document.createElement('div');
+      meas.className = 'poem-body';
+      meas.style.cssText = 'position:absolute;visibility:hidden;left:-9999px;top:0;';
+      stage.appendChild(meas);
+      const longest = lines.reduce((a, b) => ([...b].length > [...a].length ? b : a), '一') || '一';
+      // 1) 选字号：让最长一行单列高度 <= 面板高（不竖向溢出）
+      meas.style.whiteSpace = 'nowrap'; meas.style.height = 'auto';
+      let font = MAXF;
+      for (; font > MINF; font--) {
+        meas.style.fontSize = font + 'px';
+        meas.textContent = longest;
+        if (meas.offsetHeight <= sh) break;
+      }
+      // 2) 每列最多容纳字数（据此算长行换列数）
+      meas.style.fontSize = font + 'px';
+      meas.textContent = longest;
+      const charH = meas.offsetHeight / Math.max(1, [...longest].length);
+      const maxCharsPerCol = Math.max(1, Math.floor(sh / charH));
+      let totalCols = 0;
+      for (const ln of lines) totalCols += Math.max(1, Math.ceil([...ln].length / maxCharsPerCol));
+      // 3) 列宽：用整诗实际渲染宽度 / 总列数（避免单字探测误差）
+      meas.style.whiteSpace = 'pre-line'; meas.style.height = sh + 'px';
+      meas.textContent = lines.join('\n');
+      const colPitch = Math.max(font * 1.4, meas.scrollWidth / Math.max(1, totalCols));
+      stage.removeChild(meas);
+      const colsPerPage = Math.max(1, Math.floor(sw / colPitch));
+      const pages = []; let cur = [], cols = 0;     // 按列数切页（长行按其换列数计）
+      for (const ln of lines) {
+        const c = Math.max(1, Math.ceil([...ln].length / maxCharsPerCol));
+        if (cur.length && cols + c > colsPerPage) { pages.push(cur); cur = []; cols = 0; }
+        cur.push(ln); cols += c;
+      }
+      if (cur.length) pages.push(cur);
+      return { pages, font };
+    }
+
+    function setupNav(n) {
+      const nav = document.getElementById('pnav');
+      const track = document.getElementById('ptrack');
+      if (n <= 1) { nav.classList.add('hidden'); pager.go = null; pager.n = 1; return; }
+      nav.classList.remove('hidden');
+      nav.innerHTML = '<button class="pg-btn" id="pgprev" aria-label="上一页">‹</button>'
+        + '<span class="pg-dots">' + Array.from({ length: n }, (_, i) => `<span class="dot" data-i="${i}"></span>`).join('') + '</span>'
+        + '<span class="pg-count" id="pgcount"></span>'
+        + '<button class="pg-btn" id="pgnext" aria-label="下一页">›</button>';
+      const prev = nav.querySelector('#pgprev'), next = nav.querySelector('#pgnext');
+      function go(t) {
+        const pg = Math.max(0, Math.min(n - 1, t));
+        pager.page = pg;
+        track.style.transform = `translateX(${-pg * 100}%)`;
+        nav.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === pg));
+        prev.disabled = pg === 0; next.disabled = pg === n - 1;
+        nav.querySelector('#pgcount').textContent = `${pg + 1} / ${n}`;
+      }
+      prev.onclick = () => go(pager.page - 1);
+      next.onclick = () => go(pager.page + 1);
+      nav.querySelectorAll('.dot').forEach(d => d.onclick = () => go(+d.dataset.i));
+      pager.go = go; pager.n = n;
+      go(0);
+    }
+
+    function renderPoem(poem) {
+      const card = document.querySelector('.reader .body');
+      const lines = (poem.body || '').split('\n');
+      const tagsHtml = (poem.tags || []).length
+        ? `<div class="poem-tags">${poem.tags.map(t => `<span>${esc(t)}</span>`).join('')}</div>` : '';
+      card.innerHTML = '<div class="poem-stage"><div class="poem-track" id="ptrack"></div></div>'
+        + '<div class="poem-nav" id="pnav"></div>' + tagsHtml;
+      const stage = card.querySelector('.poem-stage');
+      const { pages, font } = layoutPoem(stage, lines);
+      document.getElementById('ptrack').innerHTML = pages.map(pg =>
+        `<div class="poem-page"><div class="poem-body" style="font-size:${font}px">${esc(pg.join('\n'))}</div></div>`
+      ).join('');
+      setupNav(pages.length);
+    }
+
+    /* 全局翻页交互（键盘 / 触摸滑动），只绑定一次 */
+    window.addEventListener('keydown', e => {
+      if (!pager.go) return;
+      if (e.key === 'ArrowRight') { e.preventDefault(); pager.go(pager.page + 1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); pager.go(pager.page - 1); }
+    });
+    let swipeX = null;
+    document.addEventListener('pointerdown', e => { if (e.target.closest('.poem-stage')) swipeX = e.clientX; });
+    document.addEventListener('pointerup', e => {
+      if (swipeX == null || !pager.go) { swipeX = null; return; }
+      const dx = e.clientX - swipeX; swipeX = null;
+      if (Math.abs(dx) > 50) pager.go(pager.page + (dx < 0 ? 1 : -1));
+    });
+    window.addEventListener('resize', () => {
+      if (!curPoem) return;
+      clearTimeout(resizeT);
+      resizeT = setTimeout(() => renderPoem(curPoem), 200);
+    });
+
     if (from === 'poetry' && id) {
       /* ─── render a single poem from poems.json ─── */
       document.body.classList.add('poem-view');   // 淡绿阅读主题
@@ -353,11 +498,9 @@
           setStatic(poem.title, poem.date);
           const est = Math.max(1, Math.round((poem.body || '').replace(/\s/g, '').length / 180));
           document.getElementById('readtime').textContent = `约 ${est} 分钟阅读`;
-          const tagsHtml = (poem.tags || []).length
-            ? `<div class="poem-tags">${poem.tags.map(t => `<span>${esc(t)}</span>`).join('')}</div>`
-            : '';
-          document.querySelector('.body').innerHTML =
-            `<div class="poem-body">${esc(poem.body)}</div>${tagsHtml}`;
+          curPoem = poem;
+          const ready = document.fonts ? document.fonts.ready : Promise.resolve();
+          ready.then(() => renderPoem(poem));
         })
         .catch(err => {
           setStatic('诗作加载失败', '');
