@@ -162,6 +162,24 @@
       font-family: var(--han); color: var(--ink-dim);
       font-size: 1.05rem; letter-spacing: 0.1em;
     }
+    /* year section header (full-width divider in the grid) */
+    .year-head {
+      grid-column: 1 / -1;
+      display: flex; align-items: baseline; gap: 18px;
+      margin: 44px 0 6px; padding-bottom: 12px;
+      border-bottom: 1px solid var(--hair);
+    }
+    .year-head:first-child { margin-top: 4px; }
+    .year-head .y {
+      font-family: var(--brush);
+      font-size: 2.4rem; letter-spacing: 0.12em;
+      color: var(--copper); line-height: 1;
+    }
+    .year-head .n {
+      font-family: var(--mono);
+      font-size: 0.72rem; letter-spacing: 0.24em;
+      color: var(--ink-dim); text-transform: uppercase;
+    }
 
     @media (max-width: 1100px) {
       .grid { grid-template-columns: repeat(2, 1fr); }
@@ -233,11 +251,9 @@
       <div class="filters zen-rise d2">
         <div class="row">
           <span class="count" id="count">— 首</span>
-          <span class="chip active" data-view="featured" id="view-featured">精选 · Featured</span>
-          <span class="chip" data-view="all" id="view-all">全部 · All</span>
         </div>
-        <div class="row" id="tagrow"></div>
         <div class="row" id="yearrow"></div>
+        <div class="row" id="tagrow"></div>
       </div>
 
       <div class="grid zen-rise d3" id="grid">
@@ -256,13 +272,11 @@
 
   <script src="../assets/zen-fx.js"></script>
   <script>
-    /* ─── data-driven poetry grid ─── */
+    /* ─── data-driven poetry grid · 按日期排序、按年份分类 ─── */
     const GLYPHS = ['吟','詩','韻','墨','風','月','山','川','雲','夢','念','寂'];
     const esc = s => (s || '').replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
 
-    const state = {
-      poems: [], view: 'featured', tag: null, year: null, meta: null,
-    };
+    const state = { poems: [], tag: null, year: null, meta: null };
 
     function fmtDate(d) {                         // 2026-04-08 -> 2026 · 04
       if (!d) return '';
@@ -271,26 +285,15 @@
     }
 
     function filtered() {
-      let list = state.poems.slice();
-      if (state.view === 'featured') list = list.filter(p => p.featured);
+      // poems 已按日期降序；此处只做标签/年份筛选，保持顺序
+      let list = state.poems;
       if (state.tag)  list = list.filter(p => (p.tags || []).includes(state.tag));
       if (state.year) list = list.filter(p => String(p.year) === String(state.year));
       return list;
     }
 
-    function render() {
-      const grid = document.getElementById('grid');
-      const list = filtered();
-      const total = state.poems.length;
-      const feat  = state.poems.filter(p => p.featured).length;
-      document.getElementById('count').textContent =
-        `共 ${total} 首 · 精选 ${feat} 首 · 现示 ${list.length}`;
-
-      if (!list.length) {
-        grid.innerHTML = '<div class="state-msg">此筛选下暂无诗作</div>';
-        return;
-      }
-      grid.innerHTML = list.map((p, i) => `
+    function cardHTML(p, i) {
+      return `
         <div class="work zen-card" data-id="${p.id}">
           <div class="thumb"><span class="glyph">${GLYPHS[i % GLYPHS.length]}</span></div>
           <div class="info">
@@ -300,7 +303,32 @@
             <div class="desc">${esc(p.excerpt)}</div>
             <div class="tags">${(p.tags || []).slice(0, 4).map(t => `<span>${esc(t)}</span>`).join('')}</div>
           </div>
-        </div>`).join('');
+        </div>`;
+    }
+
+    function render() {
+      const grid = document.getElementById('grid');
+      const list = filtered();
+      document.getElementById('count').textContent =
+        `共 ${state.poems.length} 首${state.tag || state.year ? ` · 现示 ${list.length}` : ''}`;
+
+      if (!list.length) {
+        grid.innerHTML = '<div class="state-msg">此筛选下暂无诗作</div>';
+        return;
+      }
+
+      let html = '', curYear = null, i = 0;
+      for (const p of list) {
+        // 选定单一年份时不再插入年份分隔；否则按年份分组
+        if (!state.year && p.year !== curYear) {
+          curYear = p.year;
+          const cnt = (state.meta?.yearCounts || {})[String(curYear)];
+          html += `<div class="year-head"><span class="y">${curYear}</span>`
+                + `<span class="n">${cnt != null && !state.tag ? cnt + ' 首' : ''}</span></div>`;
+        }
+        html += cardHTML(p, i++);
+      }
+      grid.innerHTML = html;
 
       grid.querySelectorAll('.work').forEach(c => {
         c.addEventListener('click', () => {
@@ -310,15 +338,24 @@
     }
 
     function buildChips() {
-      // view toggle
-      document.querySelectorAll('[data-view]').forEach(el => {
+      // 年份（主分类）：全部 + 各年份带数量
+      const yearrow = document.getElementById('yearrow');
+      const years = state.meta?.years || [];
+      const yc = state.meta?.yearCounts || {};
+      yearrow.innerHTML = '<span class="count">年份</span>'
+        + `<span class="chip active" data-year="">全部</span>`
+        + years.map(y => `<span class="chip" data-year="${y}">${y}<span class="n">${yc[String(y)] || ''}</span></span>`).join('');
+      yearrow.querySelectorAll('[data-year]').forEach(el => {
         el.addEventListener('click', () => {
-          state.view = el.dataset.view;
-          document.querySelectorAll('[data-view]').forEach(x => x.classList.toggle('active', x === el));
+          const y = el.dataset.year || null;
+          state.year = y;
+          yearrow.querySelectorAll('[data-year]').forEach(x =>
+            x.classList.toggle('active', (x.dataset.year || null) === state.year));
           render();
         });
       });
-      // top tags
+
+      // 主题标签（次筛选）
       const tagrow = document.getElementById('tagrow');
       const top = (state.meta?.tags || []).slice(0, 14);
       tagrow.innerHTML = '<span class="count">主题</span>'
@@ -327,20 +364,8 @@
         el.addEventListener('click', () => {
           const t = el.dataset.tag;
           state.tag = state.tag === t ? null : t;
-          tagrow.querySelectorAll('[data-tag]').forEach(x => x.classList.toggle('active', x.dataset.tag === state.tag));
-          render();
-        });
-      });
-      // years
-      const yearrow = document.getElementById('yearrow');
-      const years = state.meta?.years || [];
-      yearrow.innerHTML = '<span class="count">年份</span>'
-        + years.map(y => `<span class="chip" data-year="${y}">${y}</span>`).join('');
-      yearrow.querySelectorAll('[data-year]').forEach(el => {
-        el.addEventListener('click', () => {
-          const y = el.dataset.year;
-          state.year = String(state.year) === String(y) ? null : y;
-          yearrow.querySelectorAll('[data-year]').forEach(x => x.classList.toggle('active', String(x.dataset.year) === String(state.year)));
+          tagrow.querySelectorAll('[data-tag]').forEach(x =>
+            x.classList.toggle('active', x.dataset.tag === state.tag));
           render();
         });
       });
@@ -350,7 +375,7 @@
       .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(data => {
         state.poems = data.poems || [];
-        state.meta = { tags: data.tags, years: data.meta?.years };
+        state.meta = { tags: data.tags, years: data.meta?.years, yearCounts: data.meta?.year_counts };
         buildChips();
         render();
       })
