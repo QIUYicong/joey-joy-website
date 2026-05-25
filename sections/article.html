@@ -102,26 +102,57 @@
       background: color-mix(in srgb, var(--ink) 8%, transparent);
       padding: 1px 6px; border-radius: 2px;
     }
-    /* poem rendering — preserve line breaks & verse rhythm */
-    .poem-body {
-      white-space: pre-line;
-      font-family: var(--han);
-      font-size: 1.25rem; line-height: 2.15;
+    /* ── 诗歌阅读页：淡绿底 + 高对比深色字（替代昏黄） ── */
+    body.poem-view {
+      --paper:      #e3f1de;            /* 淡绿背景 */
+      --paper-2:    #d6e9cf;
+      --paper-3:    #c7e0bf;
+      --paper-warm: #eff8ec;            /* 卡面更浅的绿白 */
+      --ink:        #112018;            /* 高对比近黑墨绿 */
+      --ink-soft:   rgba(17, 32, 24, 0.88);
+      --ink-dim:    rgba(17, 32, 24, 0.60);
+      --ink-ghost:  rgba(17, 32, 24, 0.34);
+      --ink-faint:  rgba(17, 32, 24, 0.12);
+      --hair:       rgba(17, 32, 24, 0.22);
+      --hair-soft:  rgba(17, 32, 24, 0.10);
+      --copper:     #2f7d52;            /* 深绿点缀 */
+      --copper-deep:#1f5d3b;
+      --cinnabar:   #b23b32;            /* 朱印保留红，对比鲜明 */
+      background: var(--paper) !important;
       color: var(--ink);
-      text-align: left;
+    }
+    /* 去掉暗色氛围层与特效画布，避免压暗淡绿 */
+    body.poem-view .zen-field,
+    body.poem-view .zen-grain,
+    body.poem-view .zen-vignette,
+    body.poem-view canvas { display: none !important; }
+
+    /* 诗正文竖排：每行成一竖列，列序从左到右，整首一眼看完不滑动 */
+    body.poem-view .reader { max-width: 1480px; }
+    .poem-body {
+      writing-mode: vertical-lr;        /* 竖排，列从左到右 */
+      white-space: pre-line;            /* 保留诗行 = 每行一列 */
+      max-height: 64vh;
+      overflow-x: auto; overflow-y: hidden;
+      padding-bottom: 6px;
+      font-family: var(--han);
+      font-size: clamp(1.15rem, 1.9vw, 1.7rem);
+      line-height: 2.5;                 /* 竖排下即列间距 */
+      letter-spacing: 0.14em;
+      color: var(--ink);
+      text-align: start;
     }
     .poem-tags {
       display: flex; flex-wrap: wrap; gap: 10px;
-      margin-top: 44px; padding-top: 26px;
+      margin-top: 36px; padding-top: 24px;
       border-top: 1px solid var(--hair);
     }
     .poem-tags span {
       font-family: var(--mono);
-      font-size: 0.7rem; letter-spacing: 0.16em;
-      text-transform: uppercase;
+      font-size: 0.72rem; letter-spacing: 0.16em;
       color: var(--copper);
       padding: 4px 12px;
-      border: 1px solid color-mix(in srgb, var(--copper) 40%, var(--hair));
+      border: 1px solid color-mix(in srgb, var(--copper) 45%, var(--hair));
     }
 
     @media (max-width: 700px) {
@@ -222,6 +253,7 @@
 
     if (from === 'poetry' && id) {
       /* ─── render a single poem from poems.json ─── */
+      document.body.classList.add('poem-view');   // 淡绿阅读主题
       setStatic('展卷中…', '');
       fetch('../assets/data/poems.json')
         .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
